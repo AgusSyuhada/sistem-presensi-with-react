@@ -1,0 +1,19 @@
+version: '3.8'
+
+services:
+  db:
+    image: postgres:15 # Menggunakan image resmi PostgreSQL versi 15
+    container_name: presensi_db
+    restart: always
+    ports:
+      - "5432:5432" # Memetakan port 5432 di lokal ke port 5432 di container
+    environment:
+      - POSTGRES_USER=admin
+      - POSTGRES_PASSWORD=secret
+      - POSTGRES_DB=presensi_app
+    volumes:
+      - ./db_data:/var/lib/postgresql/data # Menyimpan data database secara persisten
+      - ./init.sql:/docker-entrypoint-initdb.d/init.sql # Menjalankan skrip SQL saat inisialisasi
+
+volumes:
+  db_data:
