@@ -1,35 +1,7 @@
 import React from "react";
 import { Link } from "react-router-dom";
 
-const menuList = [
-    {
-        key: "kelola-presensi",
-        label: "Kelola Presensi",
-        icon: "history",
-        href: "/kelola-data-presensi",
-    },
-    {
-        key: "kelola-akun-guru",
-        label: "Kelola Akun Guru",
-        icon: "supervisor_account",
-        href: "/kelola-akun-guru",
-    },
-    {
-        key: "kelola-kunjungan",
-        label: "Kelola Kunjungan",
-        icon: "groups",
-        href: "/kelola-data-kunjungan",
-    },
-    {
-        key: "kelola-laporan",
-        label: "Kelola Laporan",
-        icon: "description",
-        href: "/kelola-laporan",
-    },
-];
-
-export default function Sidebar({ open, setOpen, activeMenu = "" }) {
-    // Sidebar nav item
+export default function Sidebar({ open, setOpen, menuList = [], activeMenu = "" }) {
     const renderNavItem = (menu) =>
         menu.key === activeMenu ? (
             <button
@@ -55,7 +27,6 @@ export default function Sidebar({ open, setOpen, activeMenu = "" }) {
 
     return (
         <>
-            {/* Sidebar */}
             <aside
                 className={`
           fixed md:static inset-y-0 left-0 z-30 w-64 bg-[#D7F8E5] flex flex-col
@@ -65,10 +36,8 @@ export default function Sidebar({ open, setOpen, activeMenu = "" }) {
         `}
                 id="sidebar"
             >
-                {/* Bagian atas sidebar mobile */}
                 <div className="bg-[#4caf50] h-16 flex items-center justify-between px-4 text-white md:hidden">
                     <span className="font-bold">MI AL FAIZEIN</span>
-                    {/* Tombol close (X) hanya muncul saat sidebar terbuka */}
                     <button
                         className="text-white focus:outline-none"
                         onClick={() => setOpen(false)}
@@ -92,7 +61,6 @@ export default function Sidebar({ open, setOpen, activeMenu = "" }) {
                     </Link>
                 </div>
             </aside>
-            {/* Overlay Mobile */}
             <div
                 id="overlay"
                 className={`fixed inset-0 bg-black bg-opacity-50 z-20 md:hidden transition-opacity ${open ? "" : "hidden"

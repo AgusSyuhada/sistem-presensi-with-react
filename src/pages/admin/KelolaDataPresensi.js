@@ -1,7 +1,132 @@
-import React, { useState } from "react";
-import Sidebar from "./components/Sidebar";
+import React, { useState, useEffect } from "react";
+import Sidebar from "../../components/Sidebar";
+
+const sidebarMenu = [
+    {
+        key: "kelola-presensi",
+        label: "Kelola Presensi",
+        icon: "history",
+        href: "/kelola-data-presensi",
+    },
+    {
+        key: "kelola-akun-guru",
+        label: "Kelola Akun Guru",
+        icon: "supervisor_account",
+        href: "/kelola-akun-guru",
+    },
+    {
+        key: "kelola-kunjungan",
+        label: "Kelola Kunjungan",
+        icon: "groups",
+        href: "/kelola-data-kunjungan",
+    },
+    {
+        key: "kelola-laporan",
+        label: "Kelola Laporan",
+        icon: "description",
+        href: "/kelola-laporan",
+    },
+]
 
 const dataDummy = [
+    {
+        pegid: "123 456 789",
+        nama: "Lorem Ipsum",
+        tanggal: "12-08-2025",
+        waktu: "09:16",
+        status: "Presensi",
+    },
+    {
+        pegid: "123 456 789",
+        nama: "Lorem Ipsum",
+        tanggal: "12-08-2025",
+        waktu: "09:16",
+        status: "Presensi",
+    },
+    {
+        pegid: "123 456 789",
+        nama: "Lorem Ipsum",
+        tanggal: "12-08-2025",
+        waktu: "09:16",
+        status: "Presensi",
+    },
+    {
+        pegid: "123 456 789",
+        nama: "Lorem Ipsum",
+        tanggal: "12-08-2025",
+        waktu: "09:16",
+        status: "Presensi",
+    },
+    {
+        pegid: "123 456 789",
+        nama: "Lorem Ipsum",
+        tanggal: "12-08-2025",
+        waktu: "09:16",
+        status: "Presensi",
+    },
+    {
+        pegid: "123 456 789",
+        nama: "Lorem Ipsum",
+        tanggal: "12-08-2025",
+        waktu: "09:16",
+        status: "Presensi",
+    },
+    {
+        pegid: "123 456 789",
+        nama: "Lorem Ipsum",
+        tanggal: "12-08-2025",
+        waktu: "09:16",
+        status: "Presensi",
+    },
+    {
+        pegid: "123 456 789",
+        nama: "Lorem Ipsum",
+        tanggal: "12-08-2025",
+        waktu: "09:16",
+        status: "Presensi",
+    },
+    {
+        pegid: "123 456 789",
+        nama: "Lorem Ipsum",
+        tanggal: "12-08-2025",
+        waktu: "09:16",
+        status: "Presensi",
+    },
+    {
+        pegid: "123 456 789",
+        nama: "Lorem Ipsum",
+        tanggal: "12-08-2025",
+        waktu: "09:16",
+        status: "Presensi",
+    },
+    {
+        pegid: "123 456 789",
+        nama: "Lorem Ipsum",
+        tanggal: "12-08-2025",
+        waktu: "09:16",
+        status: "Presensi",
+    },
+    {
+        pegid: "123 456 789",
+        nama: "Lorem Ipsum",
+        tanggal: "12-08-2025",
+        waktu: "09:16",
+        status: "Presensi",
+    },
+    {
+        pegid: "123 456 789",
+        nama: "Lorem Ipsum",
+        tanggal: "12-08-2025",
+        waktu: "09:16",
+        status: "Presensi",
+    },
+    {
+        pegid: "123 456 789",
+        nama: "Lorem Ipsum",
+        tanggal: "12-08-2025",
+        waktu: "09:16",
+        status: "Presensi",
+    },
     {
         pegid: "123 456 789",
         nama: "Lorem Ipsum",
@@ -29,6 +154,10 @@ export default function KelolaDataPresensi() {
     const [presensi, setPresensi] = useState(dataDummy.map(d => ({ ...d })));
     const [editStatus, setEditStatus] = useState("");
     const [sidebarOpen, setSidebarOpen] = useState(false);
+
+    useEffect(() => {
+        document.title = "Sistem Presensi | Kelola Data Presensi";
+    }, []);
 
     // Edit
     const handleEdit = (idx) => {
@@ -58,7 +187,7 @@ export default function KelolaDataPresensi() {
     };
 
     return (
-        <div className="font-sans flex flex-col h-screen">
+        <div className="font-sans flex flex-col h-screen bg-[#f5f5f5] dark:bg-[#1F2937]">
             {/* Header */}
             <header className="h-16 bg-[#4caf50] flex items-center px-4 z-20 shrink-0 relative">
                 {/* Hamburger */}
@@ -82,42 +211,46 @@ export default function KelolaDataPresensi() {
                     />
                     <span className="text-white text-xl font-bold">MI AL FAIZEIN</span>
                 </div>
-                {/* Title Mobile di header DIHAPUS */}
             </header>
 
             <div className="flex flex-1 overflow-hidden">
-                <Sidebar open={sidebarOpen} setOpen={setSidebarOpen} activeMenu="kelola-presensi" />
+                <Sidebar
+                    open={sidebarOpen}
+                    setOpen={setSidebarOpen}
+                    menuList={sidebarMenu}
+                    activeMenu="kelola-presensi"
+                />
 
                 {/* Main Content */}
-                <main className="flex-1 overflow-y-auto bg-[#f5f5f5] p-4 md:p-6">
+                <main className="flex-1 overflow-y-auto bg-[#f5f5f5] dark:bg-[#374151] p-4 md:p-6">
                     <div className="mb-6">
-                        <h1 className="text-2xl font-bold text-[#18181B]">KELOLA PRESENSI</h1>
+                        <h1 className="text-2xl font-bold text-[#18181B] dark:text-[#F9FAFB]">KELOLA PRESENSI</h1>
                     </div>
-                    <div className="bg-white p-4 md:p-6 rounded-lg shadow-md overflow-x-auto">
-                        <table className="w-full min-w-[800px] text-left text-sm border-collapse border border-[#E4E4E7]">
-                            <thead className="bg-gray-100">
+                    <div className="bg-white dark:bg-[#1F2937] p-4 md:p-6 rounded-lg shadow-md overflow-x-auto">
+                        <table className="w-full min-w-[800px] text-left text-sm border-collapse border border-[#E4E4E7] dark:border-[#374151]">
+                            <thead className="bg-gray-100 dark:bg-[#374151]">
                                 <tr>
-                                    <th className="p-4 font-medium text-[#18181B] border border-[#E4E4E7]">No</th>
-                                    <th className="p-4 font-medium text-[#18181B] border border-[#E4E4E7]">PEGID</th>
-                                    <th className="p-4 font-medium text-[#18181B] border border-[#E4E4E7]">Nama</th>
-                                    <th className="p-4 font-medium text-[#18181B] border border-[#E4E4E7]">Tanggal Presensi</th>
-                                    <th className="p-4 font-medium text-[#18181B] border border-[#E4E4E7]">Waktu Presensi</th>
-                                    <th className="p-4 font-medium text-[#18181B] border border-[#E4E4E7]">Status Presensi</th>
-                                    <th className="p-4 font-medium text-[#18181B] border border-[#E4E4E7]">Aksi</th>
+                                    <th className="p-4 font-medium text-[#18181B] dark:text-[#F9FAFB] border border-[#E4E4E7] dark:border-[#374151]">No</th>
+                                    <th className="p-4 font-medium text-[#18181B] dark:text-[#F9FAFB] border border-[#E4E4E7] dark:border-[#374151]">PEGID</th>
+                                    <th className="p-4 font-medium text-[#18181B] dark:text-[#F9FAFB] border border-[#E4E4E7] dark:border-[#374151]">Nama</th>
+                                    <th className="p-4 font-medium text-[#18181B] dark:text-[#F9FAFB] border border-[#E4E4E7] dark:border-[#374151]">Tanggal Presensi</th>
+                                    <th className="p-4 font-medium text-[#18181B] dark:text-[#F9FAFB] border border-[#E4E4E7] dark:border-[#374151]">Waktu Presensi</th>
+                                    <th className="p-4 font-medium text-[#18181B] dark:text-[#F9FAFB] border border-[#E4E4E7] dark:border-[#374151]">Status Presensi</th>
+                                    <th className="p-4 font-medium text-[#18181B] dark:text-[#F9FAFB] border border-[#E4E4E7] dark:border-[#374151]">Aksi</th>
                                 </tr>
                             </thead>
                             <tbody>
                                 {presensi.map((row, idx) => (
-                                    <tr key={idx} className="border-b border-[#E4E4E7]">
-                                        <td className="p-4 text-[#18181B] border border-[#E4E4E7]">{idx + 1}</td>
-                                        <td className="p-4 text-[#18181B] border border-[#E4E4E7]">{row.pegid}</td>
-                                        <td className="p-4 text-[#18181B] border border-[#E4E4E7]">{row.nama}</td>
-                                        <td className="p-4 text-[#18181B] border border-[#E4E4E7]">{row.tanggal}</td>
-                                        <td className="p-4 text-[#18181B] border border-[#E4E4E7]">{row.waktu}</td>
-                                        <td className="p-4 border border-[#E4E4E7]">
+                                    <tr key={idx} className="border-b border-[#E4E4E7] dark:border-[#374151]">
+                                        <td className="p-4 text-[#18181B] dark:text-[#F9FAFB] border border-[#E4E4E7] dark:border-[#374151]">{idx + 1}</td>
+                                        <td className="p-4 text-[#18181B] dark:text-[#F9FAFB] border border-[#E4E4E7] dark:border-[#374151]">{row.pegid}</td>
+                                        <td className="p-4 text-[#18181B] dark:text-[#F9FAFB] border border-[#E4E4E7] dark:border-[#374151]">{row.nama}</td>
+                                        <td className="p-4 text-[#18181B] dark:text-[#F9FAFB] border border-[#E4E4E7] dark:border-[#374151]">{row.tanggal}</td>
+                                        <td className="p-4 text-[#18181B] dark:text-[#F9FAFB] border border-[#E4E4E7] dark:border-[#374151]">{row.waktu}</td>
+                                        <td className="p-4 border border-[#E4E4E7] dark:border-[#374151]">
                                             {editingIdx === idx ? (
                                                 <select
-                                                    className="status-select w-full p-1 text-xs border rounded"
+                                                    className="status-select w-full p-1 text-xs border rounded dark:bg-[#374151] dark:text-[#F9FAFB] dark:border-[#6B7280]"
                                                     value={editStatus}
                                                     onChange={e => setEditStatus(e.target.value)}
                                                 >
@@ -131,7 +264,7 @@ export default function KelolaDataPresensi() {
                                                 </span>
                                             )}
                                         </td>
-                                        <td className="p-4 border border-[#E4E4E7] text-center">
+                                        <td className="p-4 border border-[#E4E4E7] dark:border-[#374151] text-center">
                                             <div className="flex justify-center space-x-2">
                                                 {editingIdx === idx ? (
                                                     <>
@@ -174,7 +307,7 @@ export default function KelolaDataPresensi() {
                                 ))}
                                 {presensi.length === 0 && (
                                     <tr>
-                                        <td colSpan={7} className="text-center p-6 text-gray-400">Tidak ada data presensi</td>
+                                        <td colSpan={7} className="text-center p-6 text-gray-400 dark:text-gray-500">Tidak ada data presensi</td>
                                     </tr>
                                 )}
                             </tbody>

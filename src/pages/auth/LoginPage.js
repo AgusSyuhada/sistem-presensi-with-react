@@ -1,5 +1,6 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
+import { Helmet } from "react-helmet";
 
 const users = {
   "123456789": { password: "password123", role: "admin" },
@@ -25,6 +26,10 @@ export default function LoginPage() {
       alert("PEGID atau kata sandi salah!");
     }
   };
+
+  useEffect(() => {
+    document.title = "Sistem Presensi | Login";
+  }, []);
 
   return (
     <div className="bg-[#F3F4F6] dark:bg-[#1F2937] flex items-center justify-center min-h-screen font-['Roboto',sans-serif]">
