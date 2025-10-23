@@ -273,15 +273,15 @@ SELECT * FROM kunjungan;
 
 
 
--- Nonaktifkan sementara constraint FK
-SET session_replication_role = 'replica';
+-- -- Nonaktifkan sementara constraint FK
+-- SET session_replication_role = 'replica';
 
--- Drop semua tabel dengan urutan aman
-DROP TABLE IF EXISTS Laporan CASCADE;
-DROP TABLE IF EXISTS Presensi CASCADE;
-DROP TABLE IF EXISTS Tenaga_Kependidikan CASCADE;
-DROP TABLE IF EXISTS Jabatan CASCADE;
-DROP TABLE IF EXISTS Kunjungan CASCADE;
+-- -- Drop semua tabel dengan urutan aman
+-- DROP TABLE IF EXISTS Laporan CASCADE;
+-- DROP TABLE IF EXISTS Presensi CASCADE;
+-- DROP TABLE IF EXISTS Tenaga_Kependidikan CASCADE;
+-- DROP TABLE IF EXISTS Jabatan CASCADE;
+-- DROP TABLE IF EXISTS Kunjungan CASCADE;
 
--- Aktifkan kembali constraint FK
-SET session_replication_role = 'origin';
+-- -- Aktifkan kembali constraint FK
+-- SET session_replication_role = 'origin';
