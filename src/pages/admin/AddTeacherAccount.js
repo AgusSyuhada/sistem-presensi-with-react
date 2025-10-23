@@ -1,66 +1,57 @@
-import React, { useState, useEffect } from "react";
+import React from "react";
+import { Link } from "react-router-dom";
 import Sidebar from "../../components/Sidebar";
+import Modal from "../../components/Modal";
+import { useAddGuruController } from "../../hooks/useAddTeacherController";
 
+// sidebarMenu dengan rute yang benar
 const sidebarMenu = [
     {
         key: "kelola-presensi",
         label: "Kelola Presensi",
         icon: "history",
-        href: "/kelola-data-presensi",
+        href: "/dashboard/manage-attendance",
     },
     {
         key: "kelola-akun-guru",
         label: "Kelola Akun Guru",
         icon: "supervisor_account",
-        href: "/kelola-akun-guru",
+        href: "/dashboard/manage-accounts",
     },
     {
         key: "kelola-kunjungan",
         label: "Kelola Kunjungan",
         icon: "groups",
-        href: "/kelola-data-kunjungan",
+        href: "/dashboard/manage-visits",
     },
     {
         key: "kelola-laporan",
         label: "Kelola Laporan",
         icon: "description",
-        href: "/kelola-laporan",
+        href: "/dashboard/manage-reports",
     },
-]
+];
 
-export default function EditAkunGuru() {
-    const [sidebarOpen, setSidebarOpen] = useState(false);
-    const [showPassword, setShowPassword] = useState(false);
-    const [form, setForm] = useState({
-        pegid: "123 456 789",
-        nama: "Lorem Ipsum",
-        jabatan: "Lorem Ipsum",
-        password: "LoremIpsum",
-        tempatLahir: "Lorem Ipsum",
-        tanggalLahir: "2000-08-12",
-        tanggalMasuk: "2020-08-12",
-    });
-
-    useEffect(() => {
-        document.title = "Sistem Presensi | Edit Akun Guru";
-    }, []);
-
-    const handleChange = (e) => {
-        setForm({ ...form, [e.target.name]: e.target.value });
-    };
-
-    const handleSubmit = (e) => {
-        e.preventDefault();
-        // Simpan perubahan ke backend di sini
-        alert("Perubahan akun guru berhasil disimpan!");
-        // Navigasi atau aksi lain jika perlu
-    };
+export default function TambahAkunGuru() {
+    // Panggil controller
+    const {
+        sidebarOpen,
+        setSidebarOpen,
+        showPassword,
+        toggleShowPassword,
+        form,
+        isLoading,
+        error,
+        modal,
+        handleChange,
+        handleSubmit,
+        closeModal,
+    } = useAddGuruController();
 
     return (
-        <div className="font-sans flex flex-col h-screen bg-[#f5f5f5] dark:bg-[#1F2937]">
+        <div className="font-sans flex flex-col h-screen bg-[#f5f5ff] dark:bg-[#1F2937]">
             {/* Header */}
             <header className="h-16 bg-[#4caf50] flex items-center px-4 z-20 shrink-0 relative">
-                {/* Hamburger */}
                 <button
                     className="md:hidden text-white mr-3 focus:outline-none"
                     onClick={() => setSidebarOpen((v) => !v)}
@@ -68,11 +59,8 @@ export default function EditAkunGuru() {
                     aria-label={sidebarOpen ? "Tutup menu" : "Buka menu"}
                     type="button"
                 >
-                    <span className="material-icons" id="hamburger-icon">
-                        menu
-                    </span>
+                    <span className="material-icons" id="hamburger-icon">menu</span>
                 </button>
-                {/* Logo + Title Desktop */}
                 <div className="hidden md:flex items-center">
                     <img
                         alt="MI ALFAIZEIN Logo"
@@ -84,20 +72,40 @@ export default function EditAkunGuru() {
             </header>
 
             <div className="flex flex-1 overflow-hidden">
+                {/* Gunakan activeMenu yang benar */}
                 <Sidebar
                     open={sidebarOpen}
                     setOpen={setSidebarOpen}
                     menuList={sidebarMenu}
+                    activeMenu="kelola-akun-guru"
                 />
 
                 {/* Main Content */}
                 <main className="flex-1 overflow-y-auto bg-[#f5f5f5] dark:bg-[#374151] p-4 md:p-6">
-                    <div className="mb-6">
-                        <h1 className="text-2xl font-bold text-[#18181B] dark:text-[#F9FAFB]">EDIT AKUN GURU</h1>
+                    <div className="flex justify-between items-center mb-6">
+                        <h1 className="text-2xl font-bold text-[#18181B] dark:text-[#F9FAFB]">TAMBAH AKUN GURU</h1>
+                        <Link
+                            to="/dashboard/manage-accounts"
+                            className="flex items-center text-sm text-[#4caf50] hover:underline"
+                        >
+                            <span className="material-icons mr-1 text-base">arrow_back</span>
+                            Kembali
+                        </Link>
                     </div>
+
+                    {/* Tampilkan pesan Error jika ada */}
+                    {error && (
+                        <div className="bg-red-100 border border-red-400 text-red-700 px-4 py-3 rounded relative mb-4" role="alert">
+                            <strong className="font-bold">Error!</strong>
+                            <span className="block sm:inline"> {error}</span>
+                        </div>
+                    )}
+
                     <div className="bg-white dark:bg-[#1F2937] p-4 md:p-6 rounded-lg shadow-md">
+                        {/* Hubungkan form dengan controller */}
                         <form onSubmit={handleSubmit}>
                             <div className="space-y-4">
+                                {/* ... (semua input form di-wire ke controller) ... */}
                                 <div>
                                     <label className="block text-sm font-medium text-gray-700 dark:text-gray-200 mb-1" htmlFor="pegid">
                                         PEGID
@@ -107,6 +115,7 @@ export default function EditAkunGuru() {
                                         name="pegid"
                                         type="text"
                                         className="w-full px-3 py-2 text-gray-700 dark:text-gray-100 bg-white dark:bg-[#374151] border border-gray-300 dark:border-gray-600 rounded-md focus:outline-none focus:ring-2 focus:ring-[#4caf50]"
+                                        placeholder="Masukkan PEGID"
                                         value={form.pegid}
                                         onChange={handleChange}
                                         required
@@ -121,6 +130,7 @@ export default function EditAkunGuru() {
                                         name="nama"
                                         type="text"
                                         className="w-full px-3 py-2 text-gray-700 dark:text-gray-100 bg-white dark:bg-[#374151] border border-gray-300 dark:border-gray-600 rounded-md focus:outline-none focus:ring-2 focus:ring-[#4caf50]"
+                                        placeholder="Masukkan Nama"
                                         value={form.nama}
                                         onChange={handleChange}
                                     />
@@ -134,6 +144,7 @@ export default function EditAkunGuru() {
                                         name="jabatan"
                                         type="text"
                                         className="w-full px-3 py-2 text-gray-700 dark:text-gray-100 bg-white dark:bg-[#374151] border border-gray-300 dark:border-gray-600 rounded-md focus:outline-none focus:ring-2 focus:ring-[#4caf50]"
+                                        placeholder="Masukkan Jabatan"
                                         value={form.jabatan}
                                         onChange={handleChange}
                                     />
@@ -148,6 +159,7 @@ export default function EditAkunGuru() {
                                             name="password"
                                             type={showPassword ? "text" : "password"}
                                             className="w-full px-3 py-2 pr-10 text-gray-700 dark:text-gray-100 bg-white dark:bg-[#374151] border border-gray-300 dark:border-gray-600 rounded-md focus:outline-none focus:ring-2 focus:ring-[#4caf50]"
+                                            placeholder="Masukkan Password"
                                             value={form.password}
                                             onChange={handleChange}
                                             required
@@ -155,7 +167,7 @@ export default function EditAkunGuru() {
                                         <button
                                             type="button"
                                             className="absolute inset-y-0 right-0 pr-3 flex items-center"
-                                            onClick={() => setShowPassword((v) => !v)}
+                                            onClick={toggleShowPassword}
                                             tabIndex={-1}
                                             aria-label={showPassword ? "Sembunyikan password" : "Tampilkan password"}
                                         >
@@ -174,6 +186,7 @@ export default function EditAkunGuru() {
                                         name="tempatLahir"
                                         type="text"
                                         className="w-full px-3 py-2 text-gray-700 dark:text-gray-100 bg-white dark:bg-[#374151] border border-gray-300 dark:border-gray-600 rounded-md focus:outline-none focus:ring-2 focus:ring-[#4caf50]"
+                                        placeholder="Masukkan Tempat Lahir"
                                         value={form.tempatLahir}
                                         onChange={handleChange}
                                     />
@@ -208,15 +221,29 @@ export default function EditAkunGuru() {
                             <div className="mt-6">
                                 <button
                                     type="submit"
-                                    className="w-full bg-[#4caf50] text-white font-bold py-2.5 px-4 rounded-lg hover:bg-green-600 transition-colors"
+                                    className={`w-full bg-[#4caf50] text-white font-bold py-2.5 px-4 rounded-lg hover:bg-green-600 transition-colors ${isLoading ? 'opacity-50 cursor-not-allowed' : ''}`}
+                                    disabled={isLoading}
                                 >
-                                    Simpan Perubahan
+                                    {isLoading ? "Menyimpan..." : "Simpan"}
                                 </button>
                             </div>
                         </form>
                     </div>
                 </main>
             </div>
+
+            {/* Render Modal */}
+            <Modal isOpen={modal.isOpen} onClose={closeModal} title={modal.title}>
+                <p className="text-gray-700 dark:text-gray-300">{modal.message}</p>
+                <div className="flex justify-end gap-3 mt-5">
+                    <button
+                        onClick={closeModal}
+                        className="px-4 py-2 bg-[#4caf50] text-white rounded-lg hover:bg-opacity-90 transition"
+                    >
+                        OK
+                    </button>
+                </div>
+            </Modal>
         </div>
     );
 }

@@ -114,13 +114,13 @@ const sidebarMenu = [
     key: "riwayat-presensi",
     label: "History Presensi",
     icon: "history",
-    href: "/riwayat-presensi",
+    href: "/dashboard/attendance-history",
   },
   {
     key: "profil",
     label: "Profil",
     icon: "person",
-    href: "/profil",
+    href: "/dashboard/profile",
   },
 ];
 
