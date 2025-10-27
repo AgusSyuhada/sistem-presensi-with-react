@@ -1,26 +1,12 @@
-import React, { useState, useEffect } from "react";
-import { useNavigate } from "react-router-dom";
+import React, { useEffect } from "react";
+import { useVisitFormController } from "../../hooks/useVisitsController";
 
-export default function FormKunjungan() {
-    const [form, setForm] = useState({
-        nama: "",
-        asalInstansi: "",
-        tujuan: "",
-    });
-    const navigate = useNavigate();
+export default function VisitForm() {
+    const { form, error, isSubmitting, handleChange, handleSubmit } = useVisitFormController();
 
     useEffect(() => {
         document.title = "MI Al Faizein - Form Kunjungan";
     }, []);
-
-    const handleChange = (e) => {
-        setForm({ ...form, [e.target.name]: e.target.value });
-    };
-
-    const handleSubmit = (e) => {
-        e.preventDefault();
-        navigate("/response-kunjungan");
-    };
 
     return (
         <div className="bg-[#F3F4F6] dark:bg-[#1F2937] min-h-screen text-[#111827] dark:text-[#F9FAFB] font-[Poppins,sans-serif]">
@@ -72,18 +58,18 @@ export default function FormKunjungan() {
                             <div>
                                 <label
                                     className="block text-sm font-medium text-[#111827] dark:text-[#F9FAFB]"
-                                    htmlFor="asalInstansi"
+                                    htmlFor="instansi"
                                 >
                                     Asal Instansi
                                 </label>
                                 <div className="mt-1">
                                     <input
                                         className="w-full px-4 py-3 rounded-lg border border-gray-300 dark:border-gray-600 focus:outline-none focus:ring-2 focus:ring-[#4CAF50] bg-white dark:bg-[#374151] text-[#111827] dark:text-[#F9FAFB]"
-                                        id="asalInstansi"
-                                        name="asalInstansi"
+                                        id="instansi"
+                                        name="instansi"
                                         placeholder="Asal Instansi"
                                         type="text"
-                                        value={form.asalInstansi}
+                                        value={form.instansi}
                                         onChange={handleChange}
                                         required
                                     />
@@ -109,12 +95,16 @@ export default function FormKunjungan() {
                                     />
                                 </div>
                             </div>
+                            {error && (
+                                <div className="text-red-500 text-sm text-center">{error}</div>
+                            )}
                             <div>
                                 <button
                                     className="w-full flex justify-center py-2 px-4 border border-transparent rounded-md shadow-sm text-sm font-medium text-white bg-[#4CAF50] hover:bg-green-600 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-[#4CAF50] transition duration-150 ease-in-out"
                                     type="submit"
+                                    disabled={isSubmitting}
                                 >
-                                    Simpan
+                                    {isSubmitting ? "Menyimpan..." : "Simpan"}
                                 </button>
                             </div>
                         </div>

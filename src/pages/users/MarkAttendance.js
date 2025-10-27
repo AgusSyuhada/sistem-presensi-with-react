@@ -1,66 +1,15 @@
-import React, { useEffect, useRef, useState } from "react";
-import { useNavigate } from "react-router-dom";
+import React, { useEffect, useRef } from "react";
+import { useAttendanceUserController } from "../../hooks/useAttendanceController"; // Updated import
 
-export default function Presensi() {
+export default function MarkAttendance() {
     const videoRef = useRef(null);
-    const [stream, setStream] = useState(null);
-    const [currentFacingMode, setCurrentFacingMode] = useState("user");
-    const [flashEnabled, setFlashEnabled] = useState(false);
-    const [cameraError, setCameraError] = useState(false);
-    const navigate = useNavigate();
+    const { stream, currentFacingMode, flashEnabled, cameraError, isSubmitting, handleFlash, handleRotate, handleCapture } = useAttendanceUserController();
 
     useEffect(() => {
-        document.title = "MI Al Faizein - Presensi";
-        startCamera(currentFacingMode);
-
-        return () => {
-            if (stream) {
-                stream.getTracks().forEach((track) => track.stop());
-            }
-        };
-        // eslint-disable-next-line
-    }, [currentFacingMode]);
-
-    const startCamera = async (facingMode = "user") => {
-        try {
-            if (stream) {
-                stream.getTracks().forEach((track) => track.stop());
-            }
-            const constraints = {
-                video: { facingMode: facingMode },
-                audio: false,
-            };
-            const newStream = await navigator.mediaDevices.getUserMedia(constraints);
-            if (videoRef.current) {
-                videoRef.current.srcObject = newStream;
-            }
-            setStream(newStream);
-            setCameraError(false);
-            setFlashEnabled(false);
-        } catch (err) {
-            setCameraError(true);
-            if (videoRef.current) {
-                videoRef.current.srcObject = null;
-            }
+        if (videoRef.current && stream) {
+            videoRef.current.srcObject = stream;
         }
-    };
-
-    const handleFlash = () => {
-        setFlashEnabled((prev) => !prev);
-        alert(!flashEnabled ? "Flash diaktifkan (simulasi)" : "Flash dinonaktifkan (simulasi)");
-    };
-
-    const handleRotate = () => {
-        setCurrentFacingMode((prev) => (prev === "user" ? "environment" : "user"));
-    };
-
-    const handleCapture = () => {
-        if (!stream) {
-            alert("Kamera belum siap!");
-            return;
-        }
-        navigate("/response-presensi");
-    };
+    }, [stream]);
 
     return (
         <div className="flex flex-col h-screen font-[Poppins,sans-serif] bg-[#F3F4F6] dark:bg-[#1F2937] text-[#111827] dark:text-[#F9FAFB]">
@@ -116,6 +65,7 @@ export default function Presensi() {
                         <button
                             type="button"
                             onClick={handleCapture}
+                            disabled={isSubmitting}
                             className="p-4 bg-white rounded-full aspect-square flex items-center justify-center"
                         >
                             <span className="material-symbols-outlined text-4xl text-[#4CAF50] select-none">

@@ -1,5 +1,6 @@
-import React, { useState, useEffect } from "react";
+import React, { useEffect } from "react";
 import Sidebar from "../../components/Sidebar";
+import { useProfileController } from "../../hooks/useProfileController"; // Pastikan path sesuai dengan struktur Anda
 
 const sidebarMenu = [
     {
@@ -17,22 +18,35 @@ const sidebarMenu = [
 ];
 
 export default function Profil() {
-    const [sidebarOpen, setSidebarOpen] = useState(false);
+    const { profileData, isLoading, error, sidebarOpen, setSidebarOpen } = useProfileController();
 
     useEffect(() => {
         document.title = "Sistem Presensi | Profil";
     }, []);
 
-    // Data profil dummy
-    const profil = {
-        pegid: "123 456 789",
-        nama: "John Doe",
-        jabatan: "Guru",
-        tempatLahir: "Jakarta",
-        tanggalLahir: "01-01-1990",
-        tanggalMasuk: "15-07-2015",
-        foto: "/asset/pexels-justin-shaifer-501272-1222271.jpg",
-    };
+    if (isLoading) {
+        return (
+            <div className="flex items-center justify-center min-h-screen">
+                Memuat profil...
+            </div>
+        );
+    }
+
+    if (error) {
+        return (
+            <div className="flex items-center justify-center min-h-screen text-red-500">
+                {error}
+            </div>
+        );
+    }
+
+    if (!profileData) {
+        return (
+            <div className="flex items-center justify-center min-h-screen">
+                Data profil tidak tersedia.
+            </div>
+        );
+    }
 
     return (
         <div className="font-sans flex flex-col h-screen bg-[#f5f5f5] dark:bg-[#1F2937]">
@@ -99,44 +113,44 @@ export default function Profil() {
                             <img
                                 alt="Foto Profil"
                                 className="h-24 w-24 md:h-32 md:w-32 rounded-full object-cover"
-                                src={profil.foto}
+                                src={profileData.foto}
                             />
                         </div>
                         <div className="space-y-4">
                             <div>
                                 <label className="block text-sm font-medium text-gray-700 dark:text-gray-200 mb-1">PEGID</label>
                                 <div className="w-full px-3 py-2 text-gray-700 dark:text-gray-100 bg-gray-100 dark:bg-gray-700 border border-gray-300 dark:border-gray-600 rounded-md cursor-not-allowed">
-                                    {profil.pegid}
+                                    {profileData.pegid}
                                 </div>
                             </div>
                             <div>
                                 <label className="block text-sm font-medium text-gray-700 dark:text-gray-200 mb-1">Nama</label>
                                 <div className="w-full px-3 py-2 text-gray-700 dark:text-gray-100 bg-gray-100 dark:bg-gray-700 border border-gray-300 dark:border-gray-600 rounded-md cursor-not-allowed">
-                                    {profil.nama}
+                                    {profileData.nama}
                                 </div>
                             </div>
                             <div>
                                 <label className="block text-sm font-medium text-gray-700 dark:text-gray-200 mb-1">Jabatan</label>
                                 <div className="w-full px-3 py-2 text-gray-700 dark:text-gray-100 bg-gray-100 dark:bg-gray-700 border border-gray-300 dark:border-gray-600 rounded-md cursor-not-allowed">
-                                    {profil.jabatan}
+                                    {profileData.jabatan}
                                 </div>
                             </div>
                             <div>
                                 <label className="block text-sm font-medium text-gray-700 dark:text-gray-200 mb-1">Tempat Lahir</label>
                                 <div className="w-full px-3 py-2 text-gray-700 dark:text-gray-100 bg-gray-100 dark:bg-gray-700 border border-gray-300 dark:border-gray-600 rounded-md cursor-not-allowed">
-                                    {profil.tempatLahir}
+                                    {profileData.tempatLahir}
                                 </div>
                             </div>
                             <div>
                                 <label className="block text-sm font-medium text-gray-700 dark:text-gray-200 mb-1">Tanggal Lahir</label>
                                 <div className="w-full px-3 py-2 text-gray-700 dark:text-gray-100 bg-gray-100 dark:bg-gray-700 border border-gray-300 dark:border-gray-600 rounded-md cursor-not-allowed">
-                                    {profil.tanggalLahir}
+                                    {profileData.tanggalLahir}
                                 </div>
                             </div>
                             <div>
                                 <label className="block text-sm font-medium text-gray-700 dark:text-gray-200 mb-1">Tanggal Masuk</label>
                                 <div className="w-full px-3 py-2 text-gray-700 dark:text-gray-100 bg-gray-100 dark:bg-gray-700 border border-gray-300 dark:border-gray-600 rounded-md cursor-not-allowed">
-                                    {profil.tanggalMasuk}
+                                    {profileData.tanggalMasuk}
                                 </div>
                             </div>
                         </div>

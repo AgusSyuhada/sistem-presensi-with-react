@@ -1,8 +1,14 @@
 import React from "react";
-import { useNavigate } from "react-router-dom";
+import { useNavigate, useParams, Navigate } from "react-router-dom";
 
-export default function ResponseKunjungan() {
+export default function VisitResponse({ visitData }) {
     const navigate = useNavigate();
+    const { id } = useParams();
+
+    // Redirect to /visit-form if no visitData or invalid ID
+    if (!visitData || !id) {
+        return <Navigate to="/visit-form" replace />;
+    }
 
     return (
         <main className="min-h-screen flex items-center justify-center p-4 bg-[#F3F4F6] dark:bg-[#1F2937] text-[#111827] dark:text-[#F9FAFB] font-[Poppins,sans-serif]">
@@ -20,12 +26,30 @@ export default function ResponseKunjungan() {
                         </span>
                     </div>
                 </div>
-                <p className="text-[#111827] dark:text-[#F9FAFB] mb-8">
+                <p className="text-base text-[#111827] dark:text-[#F9FAFB] mb-4">
                     Data kunjungan Anda telah berhasil disimpan. Terima kasih telah mengisi form.
                 </p>
+                {visitData && (
+                    <div className="mb-6 text-left">
+                        <h2 className="text-base font-semibold text-[#111827] dark:text-[#F9FAFB] mb-2">
+                            Detail Kunjungan:
+                        </h2>
+                        <ul className="list-disc list-inside space-y-2 text-base text-[#111827] dark:text-[#F9FAFB]">
+                            <li>
+                                <span className="font-medium">Nama:</span> {visitData.nama}
+                            </li>
+                            <li>
+                                <span className="font-medium">Asal Instansi:</span> {visitData.instansi}
+                            </li>
+                            <li>
+                                <span className="font-medium">Tujuan:</span> {visitData.tujuan}
+                            </li>
+                        </ul>
+                    </div>
+                )}
                 <button
                     className="inline-flex items-center justify-center w-full py-2 px-4 border border-transparent rounded-md shadow-sm text-sm font-medium text-white bg-[#4CAF50] hover:bg-green-600 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-[#4CAF50] transition duration-150 ease-in-out"
-                    onClick={() => navigate("/form-kunjungan")}
+                    onClick={() => navigate("/visit-form")}
                 >
                     <span className="material-symbols-outlined mr-2">arrow_back</span>
                     Kembali ke Form

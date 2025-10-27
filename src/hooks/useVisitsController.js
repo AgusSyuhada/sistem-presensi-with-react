@@ -1,13 +1,52 @@
 import { useState, useEffect } from "react";
-import { fetchKunjunganApi, deleteKunjunganApi } from "../data/visits";
+import { useNavigate } from "react-router-dom";
+import { fetchKunjunganApi, deleteKunjunganApi, createVisitApi, validateVisitData } from "../data/visits";
 
-export const useKunjunganController = () => {
+// Hook for user-side form submission (from original useVisitController.js)
+export const useVisitFormController = () => {
+    const [form, setForm] = useState({
+        nama: "",
+        instansi: "",
+        tujuan: "",
+    });
+    const [error, setError] = useState(null);
+    const [isSubmitting, setIsSubmitting] = useState(false);
+    const navigate = useNavigate();
+
+    const handleChange = (e) => {
+        setForm({ ...form, [e.target.name]: e.target.value });
+        setError(null);
+    };
+
+    const handleSubmit = async (e) => {
+        e.preventDefault();
+        setIsSubmitting(true);
+
+        const validation = validateVisitData(form);
+        if (!validation.isValid) {
+            setError(validation.message);
+            setIsSubmitting(false);
+            return;
+        }
+
+        try {
+            const newVisit = await createVisitApi(form);
+            navigate(`/visit-response/${newVisit.id}`);
+        } catch (error) {
+            setError("Gagal menyimpan data kunjungan");
+        }
+        setIsSubmitting(false);
+    };
+
+    return { form, error, isSubmitting, handleChange, handleSubmit };
+};
+
+// Hook for admin-side management (from original useKunjunganController in useVisitsController.js)
+export const useVisitAdminController = () => {
     const [kunjunganList, setKunjunganList] = useState([]);
     const [isLoading, setIsLoading] = useState(true);
     const [error, setError] = useState(null);
     const [sidebarOpen, setSidebarOpen] = useState(false);
-    
-    // State untuk Modal
     const [modal, setModal] = useState({
         isOpen: false,
         title: "",
@@ -15,38 +54,30 @@ export const useKunjunganController = () => {
         onConfirm: null,
     });
 
-    // --- Efek untuk memuat data saat komponen mount ---
     useEffect(() => {
         document.title = "Sistem Presensi | Kelola Kunjungan";
         setIsLoading(true);
         fetchKunjunganApi()
-            .then(data => {
+            .then((data) => {
                 setKunjunganList(data);
             })
-            .catch(err => setError("Gagal memuat data kunjungan"))
+            .catch((err) => setError("Gagal memuat data kunjungan"))
             .finally(() => setIsLoading(false));
     }, []);
 
-    // --- Logika Halaman (Handlers) ---
-
-    // Hapus (Menampilkan konfirmasi)
     const handleDelete = (id) => {
         setModal({
             isOpen: true,
             title: "Konfirmasi Hapus",
             message: "Yakin ingin menghapus data kunjungan ini?",
-            onConfirm: () => performDelete(id), // Panggil performDelete saat dikonfirmasi
+            onConfirm: () => performDelete(id),
         });
     };
 
-    // Logika hapus (setelah dikonfirmasi)
     const performDelete = (id) => {
-        // Bisa tambahkan loading spesifik
-        
         deleteKunjunganApi(id)
             .then(() => {
-                // Update state lokal
-                setKunjunganList(prevList => prevList.filter(k => k.id !== id));
+                setKunjunganList((prevList) => prevList.filter((k) => k.id !== id));
                 setModal({
                     isOpen: true,
                     title: "Sukses",
@@ -54,17 +85,15 @@ export const useKunjunganController = () => {
                     onConfirm: null,
                 });
             })
-            .catch(err => {
+            .catch((err) => {
                 setError(err.message || "Gagal menghapus data");
             });
     };
 
-    // Menutup modal
     const closeModal = () => {
         setModal({ isOpen: false, title: "", message: "", onConfirm: null });
     };
 
-    // Kembalikan semua state dan fungsi yang dibutuhkan oleh View
     return {
         kunjunganList,
         isLoading,

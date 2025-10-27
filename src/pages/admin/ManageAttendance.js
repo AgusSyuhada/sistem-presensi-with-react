@@ -2,7 +2,7 @@ import React from "react";
 import Sidebar from "../../components/Sidebar";
 import Modal from "../../components/Modal";
 // 1. Impor Controller (Hook)
-import { usePresensiController } from "../../hooks/useAttendanceController";
+import { useAttendanceAdminController } from "../../hooks/useAttendanceController";
 
 // Menu tetap di sini karena spesifik untuk View ini
 const sidebarMenu = [
@@ -51,7 +51,7 @@ export default function KelolaDataPresensi() {
         closeModal,
         statusOptions,
         getStatusStyle,
-    } = usePresensiController();
+    } = useAttendanceAdminController();
 
     // 3. Tampilkan UI berdasarkan state dari controller
     return (

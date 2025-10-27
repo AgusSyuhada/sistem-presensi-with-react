@@ -1,7 +1,7 @@
 import React from "react";
 import Sidebar from "../../components/Sidebar";
 import Modal from "../../components/Modal";
-import { useKunjunganController } from "../../hooks/useVisitsController";
+import { useVisitAdminController } from "../../hooks/useVisitsController";
 
 // sidebarMenu dengan rute yang benar
 const sidebarMenu = [
@@ -42,7 +42,7 @@ export default function KelolaDataKunjungan() {
         modal,
         handleDelete,
         closeModal,
-    } = useKunjunganController();
+    } = useVisitAdminController();
 
     return (
         <div className="font-sans flex flex-col h-screen bg-[#f5f5f5] dark:bg-[#1F2937]">

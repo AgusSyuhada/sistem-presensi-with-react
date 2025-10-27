@@ -3,21 +3,149 @@ import {
     fetchPresensiApi,
     updatePresensiApi,
     deletePresensiApi,
-    statusOptions, // Impor statusOptions untuk select
-    getStatusStyle // Impor helper
+    createPresensiApi,
+    statusOptions,
+    getStatusStyle
 } from "../data/attendance";
+import { useNavigate } from "react-router-dom";
+import { useAuth } from "./useAuth";
 
-export const usePresensiController = () => {
+export const useAttendanceUserController = () => {
+    const [stream, setStream] = useState(null);
+    const [currentFacingMode, setCurrentFacingMode] = useState("user");
+    const [flashEnabled, setFlashEnabled] = useState(false);
+    const [cameraError, setCameraError] = useState(false);
+    const [isSubmitting, setIsSubmitting] = useState(false);
+    const navigate = useNavigate();
+    const { user } = useAuth();
+
+    useEffect(() => {
+        document.title = "MI Al Faizein - Presensi";
+        startCamera(currentFacingMode);
+
+        return () => {
+            if (stream) {
+                stream.getTracks().forEach((track) => track.stop());
+            }
+        };
+    }, [currentFacingMode]);
+
+    const startCamera = async (facingMode = "user") => {
+        try {
+            if (stream) {
+                stream.getTracks().forEach((track) => track.stop());
+            }
+            const constraints = {
+                video: { facingMode: facingMode },
+                audio: false,
+            };
+            const newStream = await navigator.mediaDevices.getUserMedia(constraints);
+            setStream(newStream);
+            setCameraError(false);
+            setFlashEnabled(false);
+        } catch (err) {
+            setCameraError(true);
+        }
+    };
+
+    const handleFlash = () => {
+        setFlashEnabled((prev) => !prev);
+        alert(!flashEnabled ? "Flash diaktifkan (simulasi)" : "Flash dinonaktifkan (simulasi)");
+    };
+
+    const handleRotate = () => {
+        setCurrentFacingMode((prev) => (prev === "user" ? "environment" : "user"));
+    };
+
+    const handleCapture = async () => {
+        if (!stream) {
+            alert("Kamera belum siap!");
+            return;
+        }
+        if (!user) {
+            alert("Anda harus login untuk melakukan presensi!");
+            navigate("/login");
+            return;
+        }
+        setIsSubmitting(true);
+
+        const now = new Date();
+        const tanggal = now.toISOString().split('T')[0];
+        const waktu = now.toLocaleTimeString('id-ID', { hour: '2-digit', minute: '2-digit' });
+        const newData = {
+            pegid: user.pegid, // Use authenticated user's pegid ("123456789")
+            nama: user.nama || "Unknown User", // Use authenticated user's name
+            tanggal: tanggal,
+            waktu: waktu,
+            status: "Presensi",
+            lokasi: "MI Al Faizein",
+        };
+
+        try {
+            const newAttendance = await createPresensiApi(newData);
+            navigate(`/attendance-response/${newAttendance.id}`);
+        } catch (error) {
+            alert("Gagal menyimpan presensi");
+        }
+        setIsSubmitting(false);
+    };
+
+    return {
+        stream,
+        currentFacingMode,
+        flashEnabled,
+        cameraError,
+        isSubmitting,
+        handleFlash,
+        handleRotate,
+        handleCapture,
+        startCamera,
+    };
+};
+
+export const useAttendanceHistoryController = () => {
+    const [history, setHistory] = useState([]);
+    const [isLoading, setIsLoading] = useState(true);
+    const [error, setError] = useState(null);
+    const [sidebarOpen, setSidebarOpen] = useState(false);
+    const { user } = useAuth();
+    const navigate = useNavigate();
+
+    useEffect(() => {
+        document.title = "Sistem Presensi | Riwayat Presensi";
+        if (!user) {
+            setError("Anda harus login untuk melihat riwayat presensi");
+            setIsLoading(false);
+            navigate("/login", { replace: true });
+            return;
+        }
+        setIsLoading(true);
+        fetchPresensiApi()
+            .then(data => {
+                const filteredHistory = data.filter(item => item.pegid === user.pegid);
+                setHistory(filteredHistory);
+            })
+            .catch(err => setError("Gagal memuat data riwayat presensi"))
+            .finally(() => setIsLoading(false));
+    }, [user, navigate]);
+
+    return {
+        history,
+        isLoading,
+        error,
+        sidebarOpen,
+        setSidebarOpen,
+        getStatusStyle,
+    };
+};
+
+export const useAttendanceAdminController = () => {
     const [presensi, setPresensi] = useState([]);
     const [isLoading, setIsLoading] = useState(true);
     const [error, setError] = useState(null);
-
-    // State untuk UI
-    const [editingIdx, setEditingIdx] = useState(null); // Menyimpan index yang diedit
+    const [editingIdx, setEditingIdx] = useState(null);
     const [editStatus, setEditStatus] = useState("");
     const [sidebarOpen, setSidebarOpen] = useState(false);
-
-    // State untuk Modal
     const [modal, setModal] = useState({
         isOpen: false,
         title: "",
@@ -25,41 +153,33 @@ export const usePresensiController = () => {
         onConfirm: null,
     });
 
-    // --- Efek untuk memuat data saat komponen mount ---
     useEffect(() => {
         document.title = "Sistem Presensi | Kelola Data Presensi";
         setIsLoading(true);
         fetchPresensiApi()
             .then(data => {
-                setPresensi(data.map((d, idx) => ({ ...d, originalIndex: idx }))); // Simpan index asli
+                setPresensi(data.map((d, idx) => ({ ...d, originalIndex: idx })));
             })
             .catch(err => setError("Gagal memuat data"))
             .finally(() => setIsLoading(false));
     }, []);
 
-    // --- Logika Halaman (Handlers) ---
-
-    // Edit
     const handleEdit = (index) => {
         setEditingIdx(index);
         setEditStatus(presensi[index].status);
     };
 
-    // Batal edit
     const handleCancel = () => setEditingIdx(null);
 
-    // Simpan perubahan
     const handleSave = (index) => {
         const item = presensi[index];
         setIsLoading(true);
 
         updatePresensiApi(item.id, editStatus)
             .then(updatedItem => {
-                // Update state lokal
                 const updatedList = [...presensi];
                 updatedList[index].status = updatedItem.status;
                 setPresensi(updatedList);
-
                 setEditingIdx(null);
                 setModal({
                     isOpen: true,
@@ -72,24 +192,21 @@ export const usePresensiController = () => {
             .finally(() => setIsLoading(false));
     };
 
-    // Hapus (Menampilkan konfirmasi)
     const handleDelete = (index) => {
         setModal({
             isOpen: true,
             title: "Konfirmasi Hapus",
             message: "Yakin ingin menghapus data ini?",
-            onConfirm: () => performDelete(index), // Panggil performDelete saat dikonfirmasi
+            onConfirm: () => performDelete(index),
         });
     };
 
-    // Logika hapus (setelah dikonfirmasi)
     const performDelete = (index) => {
         const item = presensi[index];
         setIsLoading(true);
 
         deletePresensiApi(item.id)
             .then(() => {
-                // Update state lokal
                 setPresensi(presensi.filter((_, i) => i !== index));
                 setEditingIdx(null);
                 setModal({
@@ -103,12 +220,10 @@ export const usePresensiController = () => {
             .finally(() => setIsLoading(false));
     };
 
-    // Menutup modal
     const closeModal = () => {
         setModal({ isOpen: false, title: "", message: "", onConfirm: null });
     };
 
-    // Kembalikan semua state dan fungsi yang dibutuhkan oleh View
     return {
         presensi,
         isLoading,
@@ -124,7 +239,7 @@ export const usePresensiController = () => {
         handleSave,
         handleDelete,
         closeModal,
-        statusOptions, // Kirim ke View
-        getStatusStyle, // Kirim ke View
+        statusOptions,
+        getStatusStyle,
     };
 };
