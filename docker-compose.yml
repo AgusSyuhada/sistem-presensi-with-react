@@ -1,38 +1,41 @@
 version: '3.8'
 
 services:
-  # INI SERVICE BARU UNTUK API ANDA
-  api: 
-    container_name: presensi_api
-    restart: always
-    build: .  # <-- Ini memberitahu Docker untuk mencari Dockerfile di folder ini
-    ports:
-      - "3001:3001" # Ganti 3001 dengan port API Anda
-    environment:
-      # Anda bisa pindahkan koneksi database ke sini
-      - DB_HOST=db
-      - DB_USER=admin
-      - DB_PASSWORD=secret
-      - DB_DATABASE=presensi_app
-      - DB_PORT=5432
-      - PORT=3001
-    depends_on:
-      - db # <-- Ini memberitahu API untuk menunggu database siap
-
-  # INI SERVICE DATABASE YANG SUDAH ANDA BUAT
+  # Layanan 1: Database (Masih sama)
   db:
-    image: postgres:15 
+    image: postgres:15
     container_name: presensi_db
     restart: always
     ports:
-      - "5432:5432" 
+      - "5432:5432" # Tetap dipetakan agar DBeaver/pgAdmin bisa akses
     environment:
       - POSTGRES_USER=admin
       - POSTGRES_PASSWORD=secret
       - POSTGRES_DB=presensi_app
     volumes:
-      - ./db_data:/var/lib/postgresql/data 
-      - ./init.sql:/docker-entrypoint-initdb.d/init.sql 
+      - ./db_data:/var/lib/postgresql/data
+      - ./init.sql:/docker-entrypoint-initdb.d/init.sql
+
+  # Layanan 2: Backend API (BARU)
+  server:
+    container_name: presensi_api
+    # Build dari Dockerfile di dalam folder ./server
+    build: ./server
+    restart: always
+    ports:
+      - "3001:3001" # Petakan port API Anda
+    volumes:
+      # Sinkronkan kode lokal Anda ke dalam container
+      # Ini membuat nodemon bisa mendeteksi perubahan!
+      - ./server:/app
+      # Hindari menimpa node_modules di dalam container
+      - /app/node_modules
+    env_file:
+      # Muat semua variabel .env dari folder server
+      - ./server/.env
+    depends_on:
+      # Pastikan 'db' berjalan SEBELUM 'server' dimulai
+      - db
 
 volumes:
   db_data:

@@ -6,7 +6,6 @@ const cors = require('cors');
 const jabatanRoutes = require('./routes/jabatanRoutes');
 const tendikRoutes = require('./routes/tendikRoutes');
 const presensiRoutes = require('./routes/presensiRoutes');
-const laporanRoutes = require('./routes/laporanRoutes');
 const kunjunganRoutes = require('./routes/kunjunganRoutes');
 
 const app = express();
@@ -21,7 +20,6 @@ app.use('/api/jabatan', jabatanRoutes);
 app.use('/api/tendik', tendikRoutes);
 // Lakukan hal yang sama untuk routes lainnya...
 app.use('/api/presensi', presensiRoutes);
-app.use('/api/laporan', laporanRoutes);
 app.use('/api/kunjungan', kunjunganRoutes);
 
 // Endpoint dasar untuk cek server
