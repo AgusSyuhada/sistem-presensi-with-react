@@ -1,41 +1,60 @@
 version: '3.8'
 
 services:
-  # Layanan 1: Database (Masih sama)
   db:
-    image: postgres:15
+    image: ankane/pgvector:latest
     container_name: presensi_db
     restart: always
     ports:
-      - "5432:5432" # Tetap dipetakan agar DBeaver/pgAdmin bisa akses
+      - "5432:5432"
     environment:
-      - POSTGRES_USER=admin
-      - POSTGRES_PASSWORD=secret
-      - POSTGRES_DB=presensi_app
+      POSTGRES_USER: admin
+      POSTGRES_PASSWORD: secret
+      POSTGRES_DB: presensi_app
     volumes:
-      - ./db_data:/var/lib/postgresql/data
+      - db_data:/var/lib/postgresql/data
       - ./init.sql:/docker-entrypoint-initdb.d/init.sql
 
-  # Layanan 2: Backend API (BARU)
   server:
+    build: ./back-end
     container_name: presensi_api
-    # Build dari Dockerfile di dalam folder ./server
-    build: ./server
     restart: always
     ports:
-      - "3001:3001" # Petakan port API Anda
+      - "3001:3001"
     volumes:
-      # Sinkronkan kode lokal Anda ke dalam container
-      # Ini membuat nodemon bisa mendeteksi perubahan!
-      - ./server:/app
-      # Hindari menimpa node_modules di dalam container
+      - ./back-end:/app
       - /app/node_modules
     env_file:
-      # Muat semua variabel .env dari folder server
-      - ./server/.env
+      - ./back-end/.env
     depends_on:
-      # Pastikan 'db' berjalan SEBELUM 'server' dimulai
       - db
+      - face-service
+
+  face-service:
+    build: ./face-service
+    container_name: face_service
+    restart: always
+    ports:
+      - "5000:5000"
+    depends_on:
+      - db
+    volumes:
+      - ./face-service:/app
+
+  frontend:
+    build: ./front-end
+    container_name: presensi_frontend
+    restart: always
+    ports:
+      - "3000:3000"
+    volumes:
+      - ./front-end:/app
+      - /app/node_modules
+    environment:
+      - CHOKIDAR_USEPOLLING=true
+    depends_on:
+      - server
+    command: npm start
 
 volumes:
   db_data:
