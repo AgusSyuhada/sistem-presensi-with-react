@@ -90,7 +90,7 @@ export default function KelolaDataKunjungan() {
                             <span className="block sm:inline"> {error}</span>
                         </div>
                     )}
-                    
+
                     {/* Tampilkan Loading spinner/text */}
                     {isLoading && (
                         <div className="text-center p-6">
@@ -112,15 +112,15 @@ export default function KelolaDataKunjungan() {
                                 </thead>
                                 <tbody>
                                     {kunjunganList.map((row, idx) => (
-                                        <tr key={row.id} className="border-b border-[#E4E4E7] dark:border-[#374151]">
+                                        <tr key={row.id_kunjungan} className="border-b border-[#E4E4E7] dark:border-[#374151]"> {/* 1. Ganti key */}
                                             <td className="p-4 text-[#18181B] dark:text-[#F9FAFB] border border-[#E4E4E7] dark:border-[#374151]">{idx + 1}</td>
-                                            <td className="p-4 text-[#18181B] dark:text-[#F9FAFB] border border-[#E4E4E7] dark:border-[#374151]">{row.nama}</td>
-                                            <td className="p-4 text-[#18181B] dark:text-[#F9FAFB] border border-[#E4E4E7] dark:border-[#374151]">{row.instansi}</td>
+                                            <td className="p-4 text-[#18181B] dark:text-[#F9FAFB] border border-[#E4E4E7] dark:border-[#374151]">{row.nama_tamu}</td> {/* 2. Ganti nama_tamu */}
+                                            <td className="p-4 text-[#18181B] dark:text-[#F9FAFB] border border-[#E4E4E7] dark:border-[#374151]">{row.asal_instansi}</td> {/* 3. Ganti asal_instansi */}
                                             <td className="p-4 text-[#18181B] dark:text-[#F9FAFB] border border-[#E4E4E7] dark:border-[#374151]">{row.tujuan}</td>
                                             <td className="p-4 border border-[#E4E4E7] dark:border-[#374151] text-center">
                                                 <button
                                                     className="delete-btn w-8 h-8 rounded-full bg-red-500 text-white flex items-center justify-center hover:bg-red-600 transition"
-                                                    onClick={() => handleDelete(row.id)} // Gunakan ID
+                                                    onClick={() => handleDelete(row.id_kunjungan)} // 4. Ganti id_kunjungan
                                                     title="Hapus"
                                                 >
                                                     <span className="material-icons text-sm">delete</span>

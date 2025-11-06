@@ -161,21 +161,57 @@ export default function ManageReports() { // Ganti nama fungsi komponen jika per
                                         <th className="p-4 font-medium text-[#18181B] dark:text-[#F9FAFB] border border-[#E4E4E7] dark:border-[#374151]">Status Presensi</th>
                                     </tr>
                                 </thead>
+                                {/* Salin dan ganti <tbody> ... </tbody> di ManageReports.js */}
+
                                 <tbody>
-                                    {laporanData.map((row, idx) => (
-                                        <tr key={row.id} className="border-b border-[#E4E4E7] dark:border-[#374151]">
-                                            <td className="p-4 text-[#18181B] dark:text-[#F9FAFB] border border-[#E4E4E7] dark:border-[#374151]">{idx + 1}</td>
-                                            <td className="p-4 text-[#18181B] dark:text-[#F9FAFB] border border-[#E4E4E7] dark:border-[#374151]">{row.pegid}</td>
-                                            <td className="p-4 text-[#18181B] dark:text-[#F9FAFB] border border-[#E4E4E7] dark:border-[#374151]">{row.nama}</td>
-                                            <td className="p-4 text-[#18181B] dark:text-[#F9FAFB] border border-[#E4E4E7] dark:border-[#374151]">{row.tanggal}</td>
-                                            <td className="p-4 text-[#18181B] dark:text-[#F9FAFB] border border-[#E4E4E7] dark:border-[#374151]">{row.waktu}</td>
-                                            <td className="p-4 border border-[#E4E4E7] dark:border-[#374151]">
-                                                <span className={`px-3 py-1 text-xs font-medium rounded-full ${getStatusStyle(row.status)}`}>
-                                                    {row.status}
-                                                </span>
-                                            </td>
-                                        </tr>
-                                    ))}
+                                    {laporanData.map((row, idx) => {
+                                        // 1. Parsing tanggal DENGAN VALIDASI
+                                        const tanggal = new Date(row.waktu);
+                                        let tanggalString = 'Invalid Date';
+                                        let waktuString = 'Invalid Time';
+
+                                        // 2. Cek apakah tanggalnya valid
+                                        if (!isNaN(tanggal.getTime())) {
+                                            // 3. AMBIL KOMPONEN SECARA MANUAL (INI KUNCINYA)
+                                            const day = String(tanggal.getDate()).padStart(2, '0');
+                                            const month = String(tanggal.getMonth() + 1).padStart(2, '0'); // Ditambah 1 karena (0-11)
+                                            const year = tanggal.getFullYear();
+
+                                            const hour = String(tanggal.getHours()).padStart(2, '0');
+                                            const minute = String(tanggal.getMinutes()).padStart(2, '0');
+
+                                            // 4. PAKSA FORMAT "TANGGAL/BULAN/TAHUN"
+                                            tanggalString = `${day}/${month}/${year}`;
+                                            waktuString = `${hour}:${minute}`;
+                                        }
+
+                                        // 5. Render baris
+                                        return (
+                                            <tr key={row.id_presensi || row.id} className="border-b border-[#E4E4E7] dark:border-[#374151]">
+                                                <td className="p-4 text-[#18181B] dark:text-[#F9FAFB] border border-[#E4E4E7] dark:border-[#374151]">{idx + 1}</td>
+
+                                                <td className="p-4 text-[#18181B] dark:text-[#F9FAFB] border border-[#E4E4E7] dark:border-[#374151]">{row.id_tendik}</td>
+
+                                                <td className="p-4 text-[#18181B] dark:text-[#F9FAFB] border border-[#E4E4E7] dark:border-[#374151]">{row.nama}</td>
+
+                                                {/* 6. Tampilkan hasil format manual */}
+                                                <td className="p-4 text-[#18181B] dark:text-[#F9FAFB] border border-[#E4E4E7] dark:border-[#374151]">
+                                                    {tanggalString}
+                                                </td>
+
+                                                <td className="p-4 text-[#18181B] dark:text-[#F9FAFB] border border-[#E4E4E7] dark:border-[#374151]">
+                                                    {waktuString}
+                                                </td>
+
+                                                <td className="p-4 border border-[#E4E4E7] dark:border-[#374151]">
+                                                    <span className={`px-3 py-1 text-xs font-medium rounded-full ${getStatusStyle(row.status)}`}>
+                                                        {row.status}
+                                                    </span>
+                                                </td>
+                                            </tr>
+                                        );
+                                    })}
+
                                     {/* Pesan jika tidak ada data */}
                                     {laporanData.length === 0 && (
                                         <tr>

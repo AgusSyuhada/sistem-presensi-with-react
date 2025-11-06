@@ -12,6 +12,7 @@ import { ProtectedRoute, GuestRoute } from "./components/AuthRoutes";
 
 // Halaman Admin
 import ManageAttendance from "./pages/admin/ManageAttendance";
+import AddAttendance from "./pages/admin/AddAttendance";
 import ManageTeacherAccounts from "./pages/admin/ManageTeacherAccounts";
 import AddTeacherAccount from "./pages/admin/AddTeacherAccount";
 import EditTeacherAccount from "./pages/admin/EditTeacherAccount";
@@ -21,6 +22,7 @@ import ManageReports from "./pages/admin/ManageReports";
 // Halaman User
 import AttendanceHistory from "./pages/users/AttendanceHistory";
 import Profile from "./pages/users/Profile";
+import RegisterFace from "./pages/users/RegisterFace";
 import MarkAttendance from "./pages/users/MarkAttendance";
 
 // Halaman Guest/Publik
@@ -105,19 +107,27 @@ export default function App() {
             }
           />
 
-          {/* === ADMIN ROUTES (Hanya bisa diakses oleh role "admin") === */}
+          {/* === ADMIN ROUTES (Hanya bisa diakses oleh role {1}) === */}
           <Route
             path="/dashboard/manage-attendance"
             element={
-              <ProtectedRoute allowedRole="admin">
+              <ProtectedRoute allowedRole={1}>
                 <ManageAttendance />
+              </ProtectedRoute>
+            }
+          />
+          <Route
+            path="/dashboard/manage-attendance/add"
+            element={
+              <ProtectedRoute allowedRole={1}>
+                <AddAttendance />
               </ProtectedRoute>
             }
           />
           <Route
             path="/dashboard/manage-accounts"
             element={
-              <ProtectedRoute allowedRole="admin">
+              <ProtectedRoute allowedRole={1}>
                 <ManageTeacherAccounts />
               </ProtectedRoute>
             }
@@ -125,7 +135,7 @@ export default function App() {
           <Route
             path="/dashboard/manage-accounts/add"
             element={
-              <ProtectedRoute allowedRole="admin">
+              <ProtectedRoute allowedRole={1}>
                 <AddTeacherAccount />
               </ProtectedRoute>
             }
@@ -133,7 +143,7 @@ export default function App() {
           <Route
             path="/dashboard/manage-accounts/edit/:id"
             element={
-              <ProtectedRoute allowedRole="admin">
+              <ProtectedRoute allowedRole={1}>
                 <EditTeacherAccount />
               </ProtectedRoute>
             }
@@ -141,7 +151,7 @@ export default function App() {
           <Route
             path="/dashboard/manage-visits"
             element={
-              <ProtectedRoute allowedRole="admin">
+              <ProtectedRoute allowedRole={1}>
                 <ManageVisits />
               </ProtectedRoute>
             }
@@ -149,7 +159,7 @@ export default function App() {
           <Route
             path="/dashboard/manage-reports"
             element={
-              <ProtectedRoute allowedRole="admin">
+              <ProtectedRoute allowedRole={1}>
                 <ManageReports />
               </ProtectedRoute>
             }
@@ -168,8 +178,16 @@ export default function App() {
           <Route
             path="/dashboard/profile"
             element={
-              <ProtectedRoute allowedRole="user">
+              <ProtectedRoute allowedRole={2}>
                 <Profile />
+              </ProtectedRoute>
+            }
+          />
+          <Route
+            path="/dashboard/register-face"
+            element={
+              <ProtectedRoute allowedRole={2}>
+                <RegisterFace />
               </ProtectedRoute>
             }
           />

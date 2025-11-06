@@ -1,13 +1,15 @@
-import { useState, useEffect } from "react";
-import { fetchGuruApi, deleteGuruApi } from "../data/teacher";
+// front-end/src/hooks/useTeacherController.js
 
-export const useGuruController = () => {
+import { useState, useEffect } from "react";
+// 1. Impor API yang sebenarnya
+import { tendikApi } from "../data/tendikApi";
+
+export const useTeacherController = () => {
     const [guruList, setGuruList] = useState([]);
     const [isLoading, setIsLoading] = useState(true);
     const [error, setError] = useState(null);
     const [sidebarOpen, setSidebarOpen] = useState(false);
 
-    // State untuk Modal
     const [modal, setModal] = useState({
         isOpen: false,
         title: "",
@@ -15,38 +17,37 @@ export const useGuruController = () => {
         onConfirm: null,
     });
 
-    // --- Efek untuk memuat data saat komponen mount ---
     useEffect(() => {
         document.title = "Sistem Presensi | Kelola Akun Guru";
         setIsLoading(true);
-        fetchGuruApi()
+
+        // 2. Panggil tendikApi.getAll()
+        tendikApi.getAll()
             .then(data => {
+                // Berdasarkan backend, data sudah berisi 'nama_jabatan'
                 setGuruList(data);
             })
-            .catch(err => setError("Gagal memuat data guru"))
+            .catch(err => setError("Gagal memuat data guru: " + (err.response?.data?.error || err.message)))
             .finally(() => setIsLoading(false));
     }, []);
 
-    // --- Logika Halaman (Handlers) ---
-
-    // Hapus (Menampilkan konfirmasi)
     const handleDelete = (id) => {
         setModal({
             isOpen: true,
             title: "Konfirmasi Hapus",
             message: "Yakin ingin menghapus data akun ini?",
-            onConfirm: () => performDelete(id), // Panggil performDelete saat dikonfirmasi
+            onConfirm: () => performDelete(id),
         });
     };
 
-    // Logika hapus (setelah dikonfirmasi)
     const performDelete = (id) => {
-        setIsLoading(true); // Bisa ditambahkan loading per-baris nanti
+        setIsLoading(true);
 
-        deleteGuruApi(id)
+        // 3. Panggil tendikApi.delete()
+        tendikApi.delete(id)
             .then(() => {
-                // Update state lokal
-                setGuruList(prevList => prevList.filter(guru => guru.id !== id));
+                // 4. Sesuaikan filter dengan 'id_tendik' dari backend
+                setGuruList(prevList => prevList.filter(guru => guru.id_tendik !== id));
                 setModal({
                     isOpen: true,
                     title: "Sukses",
@@ -55,17 +56,15 @@ export const useGuruController = () => {
                 });
             })
             .catch(err => {
-                setError(err.message || "Gagal menghapus data");
+                setError("Gagal menghapus data: " + (err.response?.data?.error || err.message));
             })
             .finally(() => setIsLoading(false));
     };
 
-    // Menutup modal
     const closeModal = () => {
         setModal({ isOpen: false, title: "", message: "", onConfirm: null });
     };
 
-    // Kembalikan semua state dan fungsi yang dibutuhkan oleh View
     return {
         guruList,
         isLoading,

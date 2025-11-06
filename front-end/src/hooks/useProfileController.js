@@ -1,6 +1,6 @@
 import { useState, useEffect } from 'react';
 import { useAuth } from './useAuth'; // Pastikan path sesuai dengan struktur Anda
-import { authApi } from '../data/auth'; // Pastikan path sesuai
+import { authApi } from '../data/authApi';
 
 export const useProfileController = () => {
     const { user } = useAuth(); // Dapatkan user yang login dari AuthContext
@@ -9,11 +9,10 @@ export const useProfileController = () => {
     const [error, setError] = useState(null);
     const [sidebarOpen, setSidebarOpen] = useState(false);
 
-    // Fetch profil saat komponen mount atau user berubah
     useEffect(() => {
-        if (user && user.pegid) {
+        if (user && user.id) {
             setIsLoading(true);
-            authApi.fetchProfile(user.pegid)
+            authApi.fetchProfile(user.id) 
                 .then(data => {
                     setProfileData(data);
                 })

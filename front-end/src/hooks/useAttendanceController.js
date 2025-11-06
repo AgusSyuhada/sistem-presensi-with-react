@@ -1,119 +1,193 @@
-// Modifikasi file: front-end/src/hooks/useAttendanceController.js
-// (Ganti import dan logika dari data dummy ke presensiApi real)
-// Hapus import attendance.js dan attendanceData.js yang lama, ganti dengan presensiApi
-// Hapus statusOptions dan getStatusStyle dari import attendance, pindahkan ke sini atau buat shared
+// front-end/src/hooks/useAttendanceController.js
 
 import { useState, useEffect } from "react";
-import { presensiApi } from "../data/presensiApi"; // Import API baru
+import { presensiApi } from "../data/presensiApi"; // API Anda
+import { faceApi } from "../data/faceApi";       // API Wajah
 import { useNavigate } from "react-router-dom";
 import { useAuth } from "./useAuth";
 
-// Opsi status (Shared, pindah dari attendanceData.js)
+// Opsi status (Shared, dari file Anda)
 export const statusOptions = [
-    { value: "masuk", label: "Masuk", bg: "bg-green-200", color: "text-green-800" }, // Sesuaikan dengan backend
+    { value: "masuk", label: "Masuk", bg: "bg-green-200", color: "text-green-800" },
     { value: "pulang", label: "Pulang", bg: "bg-blue-200", color: "text-blue-800" },
     { value: "sakit", label: "Sakit", bg: "bg-yellow-200", color: "text-yellow-800" },
     { value: "izin", label: "Izin", bg: "bg-red-200", color: "text-red-800" },
-    // Tambahkan jika ada status lain seperti 'Alpa'
 ];
 
-// Helper Style (Shared, pindah dari attendanceData.js)
+// Helper Style (Shared, dari file Anda)
 export function getStatusStyle(status) {
-    const opt = statusOptions.find((o) => o.value === status) || statusOptions[0]; // Default ke Masuk
+    const opt = statusOptions.find((o) => o.value === status) || statusOptions[0];
     return `${opt.color} ${opt.bg}`;
 }
 
-export const useAttendanceUserController = () => {
+/**
+ * Helper untuk mendapatkan Geolocation sebagai Promise
+ */
+const getGeolocation = () => {
+    return new Promise((resolve, reject) => {
+        if (!navigator.geolocation) {
+            reject(new Error("Geolocation tidak didukung oleh browser Anda."));
+            return;
+        }
+        navigator.geolocation.getCurrentPosition(
+            (position) => {
+                const { latitude, longitude } = position.coords;
+                resolve(`${latitude},${longitude}`);
+            },
+            (error) => {
+                reject(new Error(`Gagal mendapatkan lokasi: ${error.message}`));
+            },
+            { enableHighAccuracy: true, timeout: 10000 }
+        );
+    });
+};
+
+
+// ====================================================================
+// HOOK 1: UNTUK PRESENSI (MARK ATTENDANCE) - INI YANG KITA GANTI
+// ====================================================================
+
+export const useAttendanceController = (videoRef) => {
     const [stream, setStream] = useState(null);
     const [currentFacingMode, setCurrentFacingMode] = useState("user");
-    const [flashEnabled, setFlashEnabled] = useState(false);
     const [cameraError, setCameraError] = useState(false);
     const [isSubmitting, setIsSubmitting] = useState(false);
+    const [flashEnabled, setFlashEnabled] = useState(false);
+
+    const [modal, setModal] = useState({
+        isOpen: false,
+        title: '',
+        message: '',
+        isSuccess: false,
+        id_presensi: null // Untuk navigasi setelah sukses
+    });
+
     const navigate = useNavigate();
-    const { user } = useAuth();
 
-    useEffect(() => {
-        document.title = "MI Al Faizein - Presensi";
-        startCamera(currentFacingMode);
-
-        return () => {
-            if (stream) {
-                stream.getTracks().forEach((track) => track.stop());
-            }
-        };
-    }, [currentFacingMode]);
-
-    const startCamera = async (facingMode = "user") => {
+    // Fungsi untuk menyalakan kamera
+    const startCamera = async (facingMode) => {
         try {
-            if (stream) {
-                stream.getTracks().forEach((track) => track.stop());
-            }
-            const constraints = {
-                video: { facingMode: facingMode },
-                audio: false,
-            };
+            if (stream) { stream.getTracks().forEach(track => track.stop()); }
+            const constraints = { video: { facingMode }, audio: false };
             const newStream = await navigator.mediaDevices.getUserMedia(constraints);
             setStream(newStream);
             setCameraError(false);
-            setFlashEnabled(false);
         } catch (err) {
+            console.error("Camera Error:", err);
             setCameraError(true);
         }
     };
 
-    const handleFlash = () => {
-        setFlashEnabled((prev) => !prev);
-        alert(!flashEnabled ? "Flash diaktifkan (simulasi)" : "Flash dinonaktifkan (simulasi)");
-    };
+    useEffect(() => {
+        startCamera(currentFacingMode);
+        return () => {
+            if (stream) { stream.getTracks().forEach(track => track.stop()); }
+        };
+    }, [currentFacingMode]);
 
+    // Fungsi untuk memutar kamera
     const handleRotate = () => {
-        setCurrentFacingMode((prev) => (prev === "user" ? "environment" : "user"));
+        setCurrentFacingMode(prev => (prev === "user" ? "environment" : "user"));
     };
 
+    // Fungsi untuk simulasi flash
+    const handleFlash = () => {
+        setFlashEnabled(true);
+        setTimeout(() => setFlashEnabled(false), 150); // Durasi flash
+    };
+
+    /**
+     * Alur Presensi Lengkap:
+     * 1. Ambil foto
+     * 2. Verifikasi wajah via faceApi.verify() (Backend memanggil /face/verify)
+     * 3. Jika OK, ambil id_tendik
+     * 4. Ambil koordinat GPS
+     * 5. Kirim (id_tendik + koordinat) ke presensiApi.create() (Backend memanggil /presensi)
+     */
     const handleCapture = async () => {
-        if (!stream) {
-            alert("Kamera belum siap!");
-            return;
-        }
-        if (!user) {
-            alert("Anda harus login untuk melakukan presensi!");
-            navigate("/login");
+        if (!videoRef.current || !stream) {
+            setModal({ isOpen: true, title: 'Error', message: 'Kamera belum siap.' });
             return;
         }
         setIsSubmitting(true);
 
-        // === PERUBAHAN: Data untuk POST ke API real ===
-        // Asumsikan Anda punya face_descriptor dari face recognition (misalnya via library seperti face-api.js)
-        // Di sini simulasi, ganti dengan data real dari capture
-        const face_descriptor = [/* array descriptor wajah dari capture */]; // Placeholder
-        const koordinat_lokasi = "lat,lng"; // Dapatkan dari geolocation
-
-        const presensiData = {
-            face_descriptor,
-            koordinat_lokasi,
-        };
-
         try {
-            const response = await presensiApi.create(presensiData);
-            navigate(`/attendance-response/${response.data.id_presensi}`); // Sesuaikan dengan response backend
+            // 1. Ambil gambar dari video
+            const canvas = document.createElement('canvas');
+            canvas.width = videoRef.current.videoWidth;
+            canvas.height = videoRef.current.videoHeight;
+            const ctx = canvas.getContext('2d');
+            ctx.drawImage(videoRef.current, 0, 0, canvas.width, canvas.height);
+            const blob = await new Promise(resolve => canvas.toBlob(resolve, 'image/jpeg'));
+
+            // 2. Buat FormData untuk verifikasi (hanya foto)
+            const formData = new FormData();
+            formData.append('foto', blob, 'verify.jpg'); // Sesuai 'faceRoutes.js'
+
+            // 3. Panggil API Verifikasi Wajah (Langkah 1)
+            const verifyResponse = await faceApi.verify(formData);
+            const { id_tendik } = verifyResponse.data.data;
+            if (!id_tendik) {
+                throw new Error("Wajah terverifikasi, namun ID Tendik tidak ditemukan.");
+            }
+
+            // 4. Ambil Lokasi (Langkah 2)
+            const koordinat_lokasi = await getGeolocation();
+
+            // 5. Kirim data presensi (Langkah 3)
+            const presensiData = { id_tendik, koordinat_lokasi };
+            // Panggil API dari presensiApi.js (POST /api/presensi)
+            const presensiResponse = await presensiApi.create(presensiData);
+
+            // 6. Sukses: Tampilkan modal
+            setModal({
+                isOpen: true,
+                title: 'Presensi Berhasil',
+                message: presensiResponse.message || 'Presensi Anda telah dicatat.',
+                isSuccess: true,
+                id_presensi: presensiResponse.data.id_presensi
+            });
+
         } catch (error) {
-            alert("Gagal menyimpan presensi: " + (error.response?.data?.error || error.message));
+            // 7. Gagal: Tampilkan modal error
+            setModal({
+                isOpen: true,
+                title: 'Presensi Gagal',
+                message: error.response?.data?.error || error.response?.data?.message || error.message,
+                isSuccess: false
+            });
+        } finally {
+            setIsSubmitting(false);
         }
-        setIsSubmitting(false);
+    };
+
+    // Fungsi untuk menutup modal
+    const closeModal = () => {
+        const { isSuccess, id_presensi } = modal; // Ambil data sebelum reset
+        setModal({ isOpen: false, title: '', message: '', isSuccess: false });
+
+        // Jika sukses, navigasi ke halaman respons
+        if (isSuccess && id_presensi) {
+            navigate(`/attendance-response/${id_presensi}`);
+        }
     };
 
     return {
         stream,
-        currentFacingMode,
-        flashEnabled,
         cameraError,
         isSubmitting,
-        handleFlash,
+        modal,
+        flashEnabled,
         handleRotate,
-        handleCapture,
-        startCamera,
+        handleFlash,
+        handleCapture, // Kirim fungsi capture yang benar
+        closeModal
     };
 };
+
+// ====================================================================
+// HOOK 2: UNTUK RIWAYAT (HISTORY) - INI MILIK ANDA (Tidak diubah)
+// ====================================================================
 
 export const useAttendanceHistoryController = () => {
     const [history, setHistory] = useState([]);
@@ -132,8 +206,10 @@ export const useAttendanceHistoryController = () => {
             return;
         }
         setIsLoading(true);
-        // === PERUBAHAN: Gunakan route baru getByUserId ===
-        presensiApi.getByUserId(user.id) // Asumsikan user.id adalah id_tendik
+
+        // PENTING: Ini memanggil getByUserId(user.id)
+        // Pastikan backend Anda punya route GET /api/presensi/user/:id_tendik
+        presensiApi.getByUserId(user.id)
             .then(data => setHistory(data))
             .catch(err => setError("Gagal memuat data riwayat presensi: " + (err.response?.data?.error || err.message)))
             .finally(() => setIsLoading(false));
@@ -148,6 +224,10 @@ export const useAttendanceHistoryController = () => {
         getStatusStyle,
     };
 };
+
+// ====================================================================
+// HOOK 3: UNTUK ADMIN - INI MILIK ANDA (Tidak diubah)
+// ====================================================================
 
 export const useAttendanceAdminController = () => {
     const [presensi, setPresensi] = useState([]);
@@ -166,7 +246,6 @@ export const useAttendanceAdminController = () => {
     useEffect(() => {
         document.title = "Sistem Presensi | Kelola Data Presensi";
         setIsLoading(true);
-        // === PERUBAHAN: Gunakan getAll untuk admin ===
         presensiApi.getAll()
             .then(data => {
                 setPresensi(data.map((d, idx) => ({ ...d, originalIndex: idx })));
@@ -186,13 +265,12 @@ export const useAttendanceAdminController = () => {
         const item = presensi[index];
         setIsLoading(true);
 
-        // === PERUBAHAN: Data untuk PUT ===
         const updateData = { status: editStatus, catatan: '' }; // Sesuaikan dengan backend
 
-        presensiApi.updateStatus(item.id_presensi || item.id, updateData) // Sesuaikan id
+        presensiApi.updateStatus(item.id_presensi || item.id, updateData)
             .then(updatedItem => {
                 const updatedList = [...presensi];
-                updatedList[index].status = updatedItem.status;
+                updatedList[index].status = updatedItem.status; // Pastikan backend mengembalikan status baru
                 setPresensi(updatedList);
                 setEditingIdx(null);
                 setModal({
@@ -216,17 +294,7 @@ export const useAttendanceAdminController = () => {
     };
 
     const performDelete = (index) => {
-        const item = presensi[index];
-        setIsLoading(true);
-
-        // === PERUBAHAN: Jika ada DELETE route, gunakan ===
-        // presensiApi.delete(item.id_presensi || item.id)
-        //   .then(() => {
-        //     setPresensi(presensi.filter((_, i) => i !== index));
-        //     ...
-        //   })
-
-        // Karena backend belum punya DELETE, skip atau tambahkan di backend dulu
+        // ... (Logika delete Anda, saat ini di-skip) ...
         alert('DELETE belum diimplementasikan di backend');
         setIsLoading(false);
     };

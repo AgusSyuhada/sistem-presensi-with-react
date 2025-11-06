@@ -96,46 +96,46 @@ INSERT INTO Tenaga_Kependidikan (
 
 
 INSERT INTO Presensi (waktu, status, koordinat_lokasi, id_tendik, catatan) VALUES 
-('2024-10-15 07:45:00', 'masuk', '0.5071,101.4478', '20157483926104', NULL),
-('2024-10-15 16:30:00', 'pulang', '0.5071,101.4478', '20157483926104', NULL),
-('2024-10-15 07:52:00', 'masuk', '0.5075,101.4482', '19384729561038', NULL),
-('2024-10-15 16:25:00', 'pulang', '0.5075,101.4482', '19384729561038', NULL),
-('2024-10-15 07:48:00', 'masuk', '0.5069,101.4475', '21469273851047', NULL),
-('2024-10-15 16:35:00', 'pulang', '0.5069,101.4475', '21469273851047', NULL),
-('2024-10-15 07:55:00', 'masuk', '0.5072,101.4479', '18275639841029', NULL),
-('2024-10-15 16:20:00', 'pulang', '0.5072,101.4479', '18275639841029', NULL),
-('2024-10-15 07:50:00', 'masuk', '0.5070,101.4476', '22836174592063', NULL),
-('2024-10-15 16:28:00', 'pulang', '0.5070,101.4476', '22836174592063', NULL),
-('2024-10-16 07:46:00', 'masuk', '0.5073,101.4480', '20594837261058', NULL),
-('2024-10-16 16:32:00', 'pulang', '0.5073,101.4480', '20594837261058', NULL),
-('2024-10-16 07:51:00', 'masuk', '0.5071,101.4477', '21748296351072', NULL),
-('2024-10-16 16:27:00', 'pulang', '0.5071,101.4477', '21748296351072', NULL),
-('2024-10-16 07:49:00', 'masuk', '0.5074,101.4481', '19562847391086', NULL),
-('2024-10-16 16:33:00', 'pulang', '0.5074,101.4481', '19562847391086', NULL),
-('2024-10-16 07:47:00', 'masuk', '0.5072,101.4479', '22937164825093', NULL),
-('2024-10-16 16:29:00', 'pulang', '0.5072,101.4479', '22937164825093', NULL),
-('2024-10-16 07:53:00', 'masuk', '0.5070,101.4478', '20681539274102', NULL),
-('2024-10-16 16:31:00', 'pulang', '0.5070,101.4478', '20681539274102', NULL),
-('2024-10-16 07:53:00', 'masuk', '0.5070,101.4478', '987654321', NULL),
-('2024-10-16 16:31:00', 'pulang', '0.5070,101.4478', '987654321', NULL);
+('2025-10-15 07:45:00', 'masuk', '0.5071,101.4478', '20157483926104', NULL),
+('2025-10-15 16:30:00', 'pulang', '0.5071,101.4478', '20157483926104', NULL),
+('2025-10-15 07:52:00', 'masuk', '0.5075,101.4482', '19384729561038', NULL),
+('2025-10-15 16:25:00', 'pulang', '0.5075,101.4482', '19384729561038', NULL),
+('2025-10-15 07:48:00', 'masuk', '0.5069,101.4475', '21469273851047', NULL),
+('2025-10-15 16:35:00', 'pulang', '0.5069,101.4475', '21469273851047', NULL),
+('2025-10-15 07:55:00', 'masuk', '0.5072,101.4479', '18275639841029', NULL),
+('2025-10-15 16:20:00', 'pulang', '0.5072,101.4479', '18275639841029', NULL),
+('2025-10-15 07:50:00', 'masuk', '0.5070,101.4476', '22836174592063', NULL),
+('2025-10-15 16:28:00', 'pulang', '0.5070,101.4476', '22836174592063', NULL),
+('2025-10-16 07:46:00', 'masuk', '0.5073,101.4480', '20594837261058', NULL),
+('2025-10-16 16:32:00', 'pulang', '0.5073,101.4480', '20594837261058', NULL),
+('2025-10-16 07:51:00', 'masuk', '0.5071,101.4477', '21748296351072', NULL),
+('2025-10-16 16:27:00', 'pulang', '0.5071,101.4477', '21748296351072', NULL),
+('2025-10-16 07:49:00', 'masuk', '0.5074,101.4481', '19562847391086', NULL),
+('2025-10-16 16:33:00', 'pulang', '0.5074,101.4481', '19562847391086', NULL),
+('2025-10-16 07:47:00', 'masuk', '0.5072,101.4479', '22937164825093', NULL),
+('2025-10-16 16:29:00', 'pulang', '0.5072,101.4479', '22937164825093', NULL),
+('2025-10-16 07:53:00', 'masuk', '0.5070,101.4478', '20681539274102', NULL),
+('2025-10-16 16:31:00', 'pulang', '0.5070,101.4478', '20681539274102', NULL),
+('2025-10-16 07:53:00', 'masuk', '0.5070,101.4478', '987654321', NULL),
+('2025-10-16 16:31:00', 'pulang', '0.5070,101.4478', '987654321', NULL);
 
 
 INSERT INTO Kunjungan (
     nama_tamu, asal_instansi, tujuan, waktu, jenis_kelamin,
     gelar_depan, gelar_belakang, no_telp, foto
 ) VALUES 
-('Andi Setiawan', 'PT Maju Jaya', 'Rapat Kerja Sama', '2024-10-14 09:30:00', 'Laki-laki', 'Dr.', 'M.BA', '082134567890', 'https://i.pravatar.cc/150?img=60'),
-('Mega Putri', 'Dinas Pendidikan Kota', 'Konsultasi Program', '2024-10-14 10:15:00', 'Perempuan', NULL, 'S.Pd', '082134567891', 'https://i.pravatar.cc/150?img=25'),
-('Rahmat Hidayat', 'Universitas Negeri', 'Penelitian', '2024-10-14 13:00:00', 'Laki-laki', 'Prof.', 'Ph.D', '082134567892', 'https://i.pravatar.cc/150?img=61'),
-('Sari Wulandari', 'CV Berkah Jaya', 'Pengajuan Proposal', '2024-10-15 08:45:00', 'Perempuan', NULL, 'S.E', '082134567893', 'https://i.pravatar.cc/150?img=26'),
-('Tommy Wijaya', 'Bank Mandiri', 'Sosialisasi Program', '2024-10-15 11:20:00', 'Laki-laki', NULL, 'S.Ak', '082134567894', 'https://i.pravatar.cc/150?img=62'),
-('Rina Marlina', 'Yayasan Harapan', 'Kunjungan Sosial', '2024-10-15 14:30:00', 'Perempuan', 'Dra.', 'M.Pd', '082134567895', 'https://i.pravatar.cc/150?img=27'),
-('Bambang Supriadi', 'Politeknik Riau', 'Koordinasi Magang', '2024-10-16 09:00:00', 'Laki-laki', 'Ir.', 'M.T', '082134567896', 'https://i.pravatar.cc/150?img=63'),
-('Desy Ratnasari', 'PT Telkom Indonesia', 'Instalasi Jaringan', '2024-10-16 10:45:00', 'Perempuan', NULL, 'S.T', '082134567897', 'https://i.pravatar.cc/150?img=28'),
-('Hendra Gunawan', 'Kementerian Agama', 'Verifikasi Data', '2024-10-16 13:15:00', 'Laki-laki', 'Drs.', 'M.Si', '082134567898', 'httpsG://i.pravatar.cc/150?img=64'),
-('Nurul Fadilah', 'SMK Negeri 1', 'Studi Banding', '2024-10-16 14:00:00', 'Perempuan', NULL, 'S.Pd', '082134567899', 'https://i.pravatar.cc/150?img=29'),
-('Agus Salim', 'PT Indosat Ooredoo', 'Penawaran Layanan', '2024-10-16 15:30:00', 'Laki-laki', NULL, 'S.Kom', '082134567800', 'https://i.pravatar.cc/150?img=65'),
-('Ika Permata', 'Puskesmas Kota', 'Pemeriksaan Kesehatan', '2024-10-16 16:00:00', 'Perempuan', NULL, 'S.Kep', '082134567801', 'https://i.pravatar.cc/150?img=30');
+('Andi Setiawan', 'PT Maju Jaya', 'Rapat Kerja Sama', '2025-10-14 09:30:00', 'Laki-laki', 'Dr.', 'M.BA', '082134567890', 'https://i.pravatar.cc/150?img=60'),
+('Mega Putri', 'Dinas Pendidikan Kota', 'Konsultasi Program', '2025-10-14 10:15:00', 'Perempuan', NULL, 'S.Pd', '082134567891', 'https://i.pravatar.cc/150?img=25'),
+('Rahmat Hidayat', 'Universitas Negeri', 'Penelitian', '2025-10-14 13:00:00', 'Laki-laki', 'Prof.', 'Ph.D', '082134567892', 'https://i.pravatar.cc/150?img=61'),
+('Sari Wulandari', 'CV Berkah Jaya', 'Pengajuan Proposal', '2025-10-15 08:45:00', 'Perempuan', NULL, 'S.E', '082134567893', 'https://i.pravatar.cc/150?img=26'),
+('Tommy Wijaya', 'Bank Mandiri', 'Sosialisasi Program', '2025-10-15 11:20:00', 'Laki-laki', NULL, 'S.Ak', '082134567894', 'https://i.pravatar.cc/150?img=62'),
+('Rina Marlina', 'Yayasan Harapan', 'Kunjungan Sosial', '2025-10-15 14:30:00', 'Perempuan', 'Dra.', 'M.Pd', '082134567895', 'https://i.pravatar.cc/150?img=27'),
+('Bambang Supriadi', 'Politeknik Riau', 'Koordinasi Magang', '2025-10-16 09:00:00', 'Laki-laki', 'Ir.', 'M.T', '082134567896', 'https://i.pravatar.cc/150?img=63'),
+('Desy Ratnasari', 'PT Telkom Indonesia', 'Instalasi Jaringan', '2025-10-16 10:45:00', 'Perempuan', NULL, 'S.T', '082134567897', 'https://i.pravatar.cc/150?img=28'),
+('Hendra Gunawan', 'Kementerian Agama', 'Verifikasi Data', '2025-10-16 13:15:00', 'Laki-laki', 'Drs.', 'M.Si', '082134567898', 'httpsG://i.pravatar.cc/150?img=64'),
+('Nurul Fadilah', 'SMK Negeri 1', 'Studi Banding', '2025-10-16 14:00:00', 'Perempuan', NULL, 'S.Pd', '082134567899', 'https://i.pravatar.cc/150?img=29'),
+('Agus Salim', 'PT Indosat Ooredoo', 'Penawaran Layanan', '2025-10-16 15:30:00', 'Laki-laki', NULL, 'S.Kom', '082134567800', 'https://i.pravatar.cc/150?img=65'),
+('Ika Permata', 'Puskesmas Kota', 'Pemeriksaan Kesehatan', '2025-10-16 16:00:00', 'Perempuan', NULL, 'S.Kep', '082134567801', 'https://i.pravatar.cc/150?img=30');
 
 
 -- SELECT * FROM jabatan;

@@ -1,4 +1,5 @@
 import React from "react";
+import { Link } from "react-router-dom";
 import Sidebar from "../../components/Sidebar";
 import Modal from "../../components/Modal";
 // 1. Impor Controller (Hook)
@@ -89,10 +90,30 @@ export default function KelolaDataPresensi() {
 
                 {/* Main Content */}
                 <main className="flex-1 overflow-y-auto bg-[#f5f5f5] dark:bg-[#374151] p-4 md:p-6">
-                    <div className="mb-6">
+                    <div className="flex justify-between items-center mb-6">
                         <h1 className="text-2xl font-bold text-[#18181B] dark:text-[#F9FAFB]">
                             KELOLA PRESENSI
                         </h1>
+
+                        {/* INI TOMBOL DESKTOP (YANG DIPERBAIKI)
+                          Perhatikan 'px-3', bukan 'px-4' lagi 
+                        */}
+                        <Link
+                            to="/dashboard/manage-attendance/add"
+                            className="md:flex items-center hidden bg-[#4caf50] text-white px-3 py-2 rounded-lg hover:bg-green-600 transition"
+                        >
+                            <span className="material-icons mr-2">add</span>
+                            Tambah Presensi
+                        </Link>
+
+                        {/* INI TOMBOL MOBILE (Tetap sama) */}
+                        <Link
+                            to="/dashboard/manage-attendance/add"
+                            className="md:hidden bg-[#4caf50] text-white w-10 h-10 rounded-lg flex items-center justify-center hover:bg-green-600 transition"
+                            title="Tambah Presensi"
+                        >
+                            <span className="material-icons">add</span>
+                        </Link>
                     </div>
 
                     {/* Tampilkan pesan Error jika ada */}
@@ -139,26 +160,31 @@ export default function KelolaDataPresensi() {
                                         </th>
                                     </tr>
                                 </thead>
+                                {/* Salin dan ganti mulai dari <tbody> sampai </tbody> */}
+
                                 <tbody>
                                     {presensi.map((row, idx) => (
                                         <tr
-                                            key={row.id} // Gunakan ID unik
+                                            key={row.id_presensi || row.id} // PERUBAHAN 1: Key lebih aman
                                             className="border-b border-[#E4E4E7] dark:border-[#374151]"
                                         >
                                             <td className="p-4 text-[#18181B] dark:text-[#F9FAFB] border border-[#E4E4E7] dark:border-[#374151]">
                                                 {idx + 1}
                                             </td>
+                                            {/* PERUBAHAN 2: Sesuaikan field dari pegid -> id_tendik */}
                                             <td className="p-4 text-[#18181B] dark:text-[#F9FAFB] border border-[#E4E4E7] dark:border-[#374151]">
-                                                {row.pegid}
+                                                {row.id_tendik}
                                             </td>
                                             <td className="p-4 text-[#18181B] dark:text-[#F9FAFB] border border-[#E4E4E7] dark:border-[#374151]">
                                                 {row.nama}
                                             </td>
+                                            {/* PERUBAHAN 3: Ambil tanggal dari row.waktu */}
                                             <td className="p-4 text-[#18181B] dark:text-[#F9FAFB] border border-[#E4E4E7] dark:border-[#374151]">
-                                                {row.tanggal}
+                                                {new Date(row.waktu).toLocaleDateString('id-ID')}
                                             </td>
+                                            {/* PERUBAHAN 4: Ambil waktu dari row.waktu */}
                                             <td className="p-4 text-[#18181B] dark:text-[#F9FAFB] border border-[#E4E4E7] dark:border-[#374151]">
-                                                {row.waktu}
+                                                {new Date(row.waktu).toLocaleTimeString('id-ID')}
                                             </td>
                                             <td className="p-4 border border-[#E4E4E7] dark:border-[#374151]">
                                                 {editingIdx === idx ? (

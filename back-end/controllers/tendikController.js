@@ -22,10 +22,19 @@ exports.getAllTendik = async (req, res) => {
 exports.getTendikById = async (req, res) => {
     try {
         const { id } = req.params;
-        const result = await pool.query('SELECT * FROM Tenaga_Kependidikan WHERE id_tendik = $1', [id]);
+        const result = await pool.query(`
+            SELECT t.*, j.nama_jabatan 
+            FROM Tenaga_Kependidikan t
+            LEFT JOIN Jabatan j ON t.id_jabatan = j.id_jabatan
+            WHERE t.id_tendik = $1
+        `, [id]);
+
         if (result.rows.length === 0) {
             return res.status(404).json({ error: 'Tenaga Kependidikan not found' });
         }
+        
+        delete result.rows[0].password;
+        
         res.status(200).json(result.rows[0]);
     } catch (err) {
         res.status(500).json({ error: err.message });

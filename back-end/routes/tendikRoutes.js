@@ -7,7 +7,7 @@ router.post('/login', tendikController.loginTendik);
 router.post('/registrasi-wajah', protect, tendikController.registrasiWajah);
 router.post('/', protect, isAdmin, tendikController.createTendik);
 router.get('/', protect, isAdmin, tendikController.getAllTendik);
-router.get('/:id', protect, isAdmin, tendikController.getTendikById);
+router.get('/:id', protect, tendikController.getTendikById);
 router.put('/:id', protect, isAdmin, tendikController.updateTendik);
 router.delete('/:id', protect, isAdmin, tendikController.deleteTendik);
 

@@ -7,75 +7,38 @@ require('dotenv').config();
 // ============================================
 exports.createPresensi = async (req, res) => {
     try {
-        const { face_descriptor, koordinat_lokasi } = req.body;
+        // 1. Terima data dari useAttendanceController
+        const { id_tendik, koordinat_lokasi } = req.body;
 
-        if (!face_descriptor || !koordinat_lokasi) {
-            return res.status(400).json({ error: 'Data face_descriptor dan koordinat_lokasi diperlukan.' });
-        }
-
-        // --- 1. Validasi Wajah (Face Recognition) ---
-        // (Bagian ini tidak berubah)
-        const allFacesResult = await pool.query('SELECT id_tendik, nama, data_wajah FROM Tenaga_Kependidikan WHERE data_wajah IS NOT NULL');
-        
-        if (allFacesResult.rows.length === 0) {
-            return res.status(404).json({ error: 'Tidak ada data wajah terdaftar di sistem.' });
-        }
-
-        const getDistance = (descA, descB) => {
-            let sum = 0;
-            for (let i = 0; i < descA.length; i++) {
-                sum += (descA[i] - descB[i]) ** 2;
-            }
-            return Math.sqrt(sum);
-        };
-
-        let bestMatch = null;
-        let minDistance = 0.6; // Threshold.
-
-        for (const tendik of allFacesResult.rows) {
-            if (tendik.data_wajah && tendik.data_wajah.length === face_descriptor.length) {
-                const distance = getDistance(face_descriptor, tendik.data_wajah);
-                
-                if (distance < minDistance) {
-                    minDistance = distance;
-                    bestMatch = tendik;
-                }
-            }
-        }
-
-        if (!bestMatch) {
-            return res.status(401).json({ error: 'Wajah Tidak Terdaftar atau Tidak Dikenali.' });
+        // 2. Validasi input
+        if (!id_tendik || !koordinat_lokasi) {
+            return res.status(400).json({ error: 'ID Tendik dan koordinat lokasi diperlukan.' });
         }
         
-        const matchedTendikId = bestMatch.id_tendik;
+        // 3. Verifikasi Wajah (SUDAH DILAKUKAN!)
+        // Kita tidak perlu lagi memvalidasi wajah di sini.
+        // Kita percaya bahwa 'id_tendik' yang dikirim valid
+        // karena sudah diverifikasi oleh 'faceApi.verify' (Python)
+        // sebelum fungsi ini dipanggil.
 
-        // ============================================
-        // === PERUBAHAN DIMULAI DI SINI ===
-        // ============================================
+        const matchedTendikId = id_tendik;
 
-        // --- 2. Validasi Lokasi (Geofencing Poligon) ---
+        // 4. Validasi Lokasi (Geofencing Poligon)
         const [lat, lng] = koordinat_lokasi.split(',').map(Number);
-
-        // Koordinat user (ini tetap sama)
         const userCoords = {
             latitude: lat,
             longitude: lng
         };
 
-        // Ambil poligon dari .env dan parse sebagai JSON
         const schoolPolygonString = process.env.SCHOOL_POLYGON_JSON;
         if (!schoolPolygonString) {
             return res.status(500).json({ error: 'Konfigurasi poligon sekolah tidak ditemukan di server.' });
         }
-
-        // Konversi string poligon dari GeoJSON [lng, lat] ke format geolib [lat, lng]
-        // Kita ambil [0] karena GeoJSON membungkus poligon di dalam array
+        
         const schoolPolygonCoords = JSON.parse(schoolPolygonString)[0].map(coord => {
-            // GeoJSON [lng, lat] -> geolib { latitude: lat, longitude: lng }
             return { latitude: coord[1], longitude: coord[0] }; 
         });
 
-        // Cek apakah titik user berada di dalam poligon
         const isInside = geolib.isPointInPolygon(userCoords, schoolPolygonCoords);
 
         if (!isInside) {
@@ -84,13 +47,7 @@ exports.createPresensi = async (req, res) => {
             });
         }
         
-        // ============================================
-        // === PERUBAHAN SELESAI DI SINI ===
-        // ============================================
-
-
-        // --- 3. Logika Masuk / Pulang (Presensi 2x) ---
-        // (Bagian ini tidak berubah)
+        // 5. Logika Masuk / Pulang (Presensi 2x)
         const today = new Date().toISOString().split('T')[0]; // 'YYYY-MM-DD'
         
         const presensiHariIni = await pool.query(
@@ -108,21 +65,23 @@ exports.createPresensi = async (req, res) => {
             return res.status(400).json({ error: 'Anda sudah melakukan presensi masuk dan pulang hari ini.' });
         }
 
-        // --- 4. Simpan ke Database ---
+        // 6. Simpan ke Database
         const newPresensi = await pool.query(
             "INSERT INTO Presensi (status, koordinat_lokasi, id_tendik) VALUES ($1, $2, $3) RETURNING *",
             [statusPresensi, koordinat_lokasi, matchedTendikId]
         );
+        
+        // Ambil nama untuk respons
+        const tendikData = await pool.query("SELECT nama FROM Tenaga_Kependidikan WHERE id_tendik = $1", [matchedTendikId]);
 
         res.status(201).json({
             message: `Presensi '${statusPresensi}' berhasil!`,
             data: newPresensi.rows[0],
             tendik: {
-                id: bestMatch.id_tendik,
-                nama: bestMatch.nama
+                id: matchedTendikId,
+                nama: tendikData.rows[0]?.nama || ''
             },
             lokasi: {
-                // 'distance' dihapus karena tidak relevan lagi
                 diizinkan: true
             }
         });

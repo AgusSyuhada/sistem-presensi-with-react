@@ -2,7 +2,7 @@ import React from "react";
 import { Link } from "react-router-dom"; // 1. Impor Link
 import Sidebar from "../../components/Sidebar";
 import Modal from "../../components/Modal";
-import { useGuruController } from "../../hooks/useTeacherController"; // 2. Impor Controller
+import { useTeacherController } from "../../hooks/useTeacherController"; // 2. Impor Controller
 
 // 3. sidebarMenu dengan href (rute) yang sudah diperbarui
 const sidebarMenu = [
@@ -43,7 +43,7 @@ export default function KelolaAkunGuru() {
         modal,
         handleDelete,
         closeModal,
-    } = useGuruController();
+    } = useTeacherController();
 
     return (
         <div className="font-sans flex flex-col h-screen bg-[#f5f5f5] dark:bg-[#1F2937]">
@@ -81,7 +81,9 @@ export default function KelolaAkunGuru() {
                 {/* Main Content */}
                 <main className="flex-1 overflow-y-auto bg-[#f5f5f5] dark:bg-[#374151] p-4 md:p-6">
                     <div className="flex justify-between items-center mb-6">
-                        <h1 className="text-2xl font-bold text-[#18181B] dark:text-[#F9FAFB]">KELOLA AKUN GURU</h1>
+                        <h1 className="text-2xl font-bold text-[#18181B] dark:text-[#F9FAFB]">
+                            KELOLA AKUN GURU
+                        </h1>
 
                         {/* 5. Ubah <a> menjadi <Link> dan perbarui 'to' (rute) */}
                         <Link
@@ -128,18 +130,26 @@ export default function KelolaAkunGuru() {
                                         <th className="p-4 font-medium text-[#18181B] dark:text-[#F9FAFB] border border-[#E4E4E7] dark:border-[#374151]">Aksi</th>
                                     </tr>
                                 </thead>
+                                {/* Salin dan ganti <tbody> ... </tbody> di ManageTeacherAccounts.js */}
+
                                 <tbody>
                                     {guruList.map((row, idx) => (
-                                        <tr key={row.id} className="border-b border-[#E4E4E7] dark:border-[#374151]">
+                                        <tr key={row.id_tendik} className="border-b border-[#E4E4E7] dark:border-[#374151]"> {/* 1. Ganti key */}
                                             <td className="p-4 text-[#18181B] dark:text-[#F9FAFB] border border-[#E4E4E7] dark:border-[#374151]">{idx + 1}</td>
-                                            <td className="p-4 text-[#18181B] dark:text-[#F9FAFB] border border-[#E4E4E7] dark:border-[#374151]">{row.pegid}</td>
+
+                                            {/* 2. Ganti pegid menjadi id_tendik */}
+                                            <td className="p-4 text-[#18181B] dark:text-[#F9FAFB] border border-[#E4E4E7] dark:border-[#374151]">{row.id_tendik}</td>
+
                                             <td className="p-4 text-[#18181B] dark:text-[#F9FAFB] border border-[#E4E4E7] dark:border-[#374151]">{row.nama}</td>
-                                            <td className="p-4 text-[#18181B] dark:text-[#F9FAFB] border border-[#E4E4E7] dark:border-[#374151]">{row.jabatan}</td>
+
+                                            {/* 3. Ganti jabatan menjadi nama_jabatan */}
+                                            <td className="p-4 text-[#18181B] dark:text-[#F9FAFB] border border-[#E4E4E7] dark:border-[#374151]">{row.nama_jabatan}</td>
+
                                             <td className="p-4 border border-[#E4E4E7] dark:border-[#374151] text-center">
                                                 <div className="flex justify-center space-x-2">
-                                                    {/* 6. Ubah <a> menjadi <Link> dan perbarui 'to' (rute) dengan ID */}
+                                                    {/* 4. Ganti 'id' menjadi 'id_tendik' untuk rute Edit */}
                                                     <Link
-                                                        to={`/dashboard/manage-accounts/edit/${row.id}`}
+                                                        to={`/dashboard/manage-accounts/edit/${row.id_tendik}`}
                                                         className="w-8 h-8 rounded-full bg-amber-500 text-white flex items-center justify-center hover:bg-amber-600 transition"
                                                         title="Edit"
                                                     >
@@ -147,7 +157,9 @@ export default function KelolaAkunGuru() {
                                                     </Link>
                                                     <button
                                                         className="delete-btn w-8 h-8 rounded-full bg-red-500 text-white flex items-center justify-center hover:bg-red-600 transition"
-                                                        onClick={() => handleDelete(row.id)} // 7. Gunakan ID
+
+                                                        // 5. Ganti 'id' menjadi 'id_tendik' untuk Hapus
+                                                        onClick={() => handleDelete(row.id_tendik)}
                                                         title="Hapus"
                                                     >
                                                         <span className="material-icons text-sm">delete</span>
