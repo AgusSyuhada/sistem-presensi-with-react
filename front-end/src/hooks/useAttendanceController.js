@@ -8,10 +8,10 @@ import { useAuth } from "./useAuth";
 
 // Opsi status (Shared, dari file Anda)
 export const statusOptions = [
-    { value: "masuk", label: "Masuk", bg: "bg-green-200", color: "text-green-800" },
-    { value: "pulang", label: "Pulang", bg: "bg-blue-200", color: "text-blue-800" },
-    { value: "sakit", label: "Sakit", bg: "bg-yellow-200", color: "text-yellow-800" },
-    { value: "izin", label: "Izin", bg: "bg-red-200", color: "text-red-800" },
+    { value: "Masuk", label: "Masuk", bg: "bg-green-200", color: "text-green-800" },
+    { value: "Pulang", label: "Pulang", bg: "bg-blue-200", color: "text-blue-800" },
+    { value: "Sakit", label: "Sakit", bg: "bg-yellow-200", color: "text-yellow-800" },
+    { value: "Izin", label: "Izin", bg: "bg-red-200", color: "text-red-800" },
 ];
 
 // Helper Style (Shared, dari file Anda)

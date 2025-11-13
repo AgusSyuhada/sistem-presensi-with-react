@@ -8,7 +8,7 @@ DROP TABLE IF EXISTS Jabatan;
 DROP TYPE IF EXISTS status_presensi;
 
 
-CREATE TYPE status_presensi AS ENUM ('masuk', 'pulang', 'sakit', 'izin');
+CREATE TYPE status_presensi AS ENUM ('Masuk', 'Pulang', 'Sakit', 'Izin');
 
 
 CREATE TABLE Jabatan (
@@ -24,14 +24,14 @@ CREATE TABLE Tenaga_Kependidikan (
     password VARCHAR(255) NOT NULL,
     id_jabatan INT,
     golongan VARCHAR(20),
-    tanggal_masuk DATE,
+    tanggal_Masuk DATE,
     gelar_depan VARCHAR(50),
     gelar_belakang VARCHAR(50),
-    tempat_lahir VARCHAR(50),
+    tempat_lahir VARCHAR(255),
     tanggal_lahir DATE,
     agama VARCHAR(20),
     jenis_kelamin VARCHAR(20),
-    pendidikan VARCHAR(10),
+    pendidikan VARCHAR(255),
     status_tendik VARCHAR(20),
     no_telp VARCHAR(20),
     foto_profil VARCHAR(255),
@@ -75,7 +75,7 @@ INSERT INTO Jabatan (nama_jabatan) VALUES
 
 
 INSERT INTO Tenaga_Kependidikan (
-    id_tendik, nama, email, "password", id_jabatan, golongan, tanggal_masuk,
+    id_tendik, nama, email, "password", id_jabatan, golongan, tanggal_Masuk,
     gelar_depan, gelar_belakang, tempat_lahir, tanggal_lahir,
     agama, jenis_kelamin, pendidikan, status_tendik, no_telp, foto_profil, data_wajah
 ) VALUES 
@@ -92,32 +92,38 @@ INSERT INTO Tenaga_Kependidikan (
 ('21859374621085', 'Kevin Aditya', 'kevin.aditya@example.com', '$2a$12$1kJWQAREUQ5t8WKzF7Ebgu/YfEVJcO4mXodI5CwZAzBNHmLhD453q', 1, 'II/d', '2021-08-30', NULL, 'S.T', 'Manado', '1993-01-15', 'Kristen', 'Laki-laki', 'S1', 'PPPK', '081234567800', 'https://i.pravatar.cc/150?img=51', NULL),
 ('18427596831094', 'Linda Kusuma', 'linda.kusuma@example.com', '$2a$12$1kJWQAREUQ5t8WKzF7Ebgu/YfEVJcO4mXodI5CwZAzBNHmLhD453q', 2, 'III/c', '2018-12-05', 'Ir.', 'M.T', 'Banjarmasin', '1986-10-08', 'Islam', 'Perempuan', 'S2', 'PNS', '081234567801', 'https://i.pravatar.cc/150?img=23', NULL),
 ('123456789', 'Administrator', 'admin@example.com', '$2a$12$1kJWQAREUQ5t8WKzF7Ebgu/YfEVJcO4mXodI5CwZAzBNHmLhD453q', 1, 'III/c', '2018-12-05', 'Ir.', 'M.T', 'Banjarmasin', '1986-10-08', 'Islam', 'Perempuan', 'S2', 'PNS', '081234567801', 'https://i.pravatar.cc/150?img=23', NULL),
-('987654321', 'User', 'user@example.com', '$2a$12$1kJWQAREUQ5t8WKzF7Ebgu/YfEVJcO4mXodI5CwZAzBNHmLhD453q', 2, 'III/c', '2018-12-05', 'Ir.', 'M.T', 'Banjarmasin', '1986-10-08', 'Islam', 'Perempuan', 'S2', 'PNS', '081234567801', 'https://i.pravatar.cc/150?img=23', NULL);
+('987654321', 'User', 'user@example.com', '$2a$12$1kJWQAREUQ5t8WKzF7Ebgu/YfEVJcO4mXodI5CwZAzBNHmLhD453q', 2, 'III/c', '2018-12-05', 'Ir.', 'M.T', 'Banjarmasin', '1986-10-08', 'Islam', 'Perempuan', 'S2', 'PNS', '081234567801', 'https://i.pravatar.cc/150?img=23', NULL),
+('2207125092', 'Agus Syuhada', 'agus.syuhada@example.com', '$2a$12$1kJWQAREUQ5t8WKzF7Ebgu/YfEVJcO4mXodI5CwZAzBNHmLhD453q', 2, NULL, '2025-01-01', NULL, 'S.T.', 'Pekanbaru', '2000-01-01', 'Islam', 'Laki-laki', 'S1', NULL, '081122334455', 'https://i.pravatar.cc/150?img=23', NULL),
+('2207113380', 'Ahmadi Ihsan Ananda', 'ahmadi.ihsan@example.com', '$2a$12$1kJWQAREUQ5t8WKzF7Ebgu/YfEVJcO4mXodI5CwZAzBNHmLhD453q', 2, NULL, '2025-01-01', NULL, 'S.T.', 'Pekanbaru', '2000-01-01', 'Islam', 'Laki-laki', 'S1', NULL, '081122334455', 'https://i.pravatar.cc/150?img=23', NULL);
 
 
 INSERT INTO Presensi (waktu, status, koordinat_lokasi, id_tendik, catatan) VALUES 
-('2025-10-15 07:45:00', 'masuk', '0.5071,101.4478', '20157483926104', NULL),
-('2025-10-15 16:30:00', 'pulang', '0.5071,101.4478', '20157483926104', NULL),
-('2025-10-15 07:52:00', 'masuk', '0.5075,101.4482', '19384729561038', NULL),
-('2025-10-15 16:25:00', 'pulang', '0.5075,101.4482', '19384729561038', NULL),
-('2025-10-15 07:48:00', 'masuk', '0.5069,101.4475', '21469273851047', NULL),
-('2025-10-15 16:35:00', 'pulang', '0.5069,101.4475', '21469273851047', NULL),
-('2025-10-15 07:55:00', 'masuk', '0.5072,101.4479', '18275639841029', NULL),
-('2025-10-15 16:20:00', 'pulang', '0.5072,101.4479', '18275639841029', NULL),
-('2025-10-15 07:50:00', 'masuk', '0.5070,101.4476', '22836174592063', NULL),
-('2025-10-15 16:28:00', 'pulang', '0.5070,101.4476', '22836174592063', NULL),
-('2025-10-16 07:46:00', 'masuk', '0.5073,101.4480', '20594837261058', NULL),
-('2025-10-16 16:32:00', 'pulang', '0.5073,101.4480', '20594837261058', NULL),
-('2025-10-16 07:51:00', 'masuk', '0.5071,101.4477', '21748296351072', NULL),
-('2025-10-16 16:27:00', 'pulang', '0.5071,101.4477', '21748296351072', NULL),
-('2025-10-16 07:49:00', 'masuk', '0.5074,101.4481', '19562847391086', NULL),
-('2025-10-16 16:33:00', 'pulang', '0.5074,101.4481', '19562847391086', NULL),
-('2025-10-16 07:47:00', 'masuk', '0.5072,101.4479', '22937164825093', NULL),
-('2025-10-16 16:29:00', 'pulang', '0.5072,101.4479', '22937164825093', NULL),
-('2025-10-16 07:53:00', 'masuk', '0.5070,101.4478', '20681539274102', NULL),
-('2025-10-16 16:31:00', 'pulang', '0.5070,101.4478', '20681539274102', NULL),
-('2025-10-16 07:53:00', 'masuk', '0.5070,101.4478', '987654321', NULL),
-('2025-10-16 16:31:00', 'pulang', '0.5070,101.4478', '987654321', NULL);
+('2025-10-15 07:45:00', 'Masuk', '0.5071,101.4478', '20157483926104', NULL),
+('2025-10-15 16:30:00', 'Pulang', '0.5071,101.4478', '20157483926104', NULL),
+('2025-10-15 07:52:00', 'Masuk', '0.5075,101.4482', '19384729561038', NULL),
+('2025-10-15 16:25:00', 'Pulang', '0.5075,101.4482', '19384729561038', NULL),
+('2025-10-15 07:48:00', 'Masuk', '0.5069,101.4475', '21469273851047', NULL),
+('2025-10-15 16:35:00', 'Pulang', '0.5069,101.4475', '21469273851047', NULL),
+('2025-10-15 07:55:00', 'Masuk', '0.5072,101.4479', '18275639841029', NULL),
+('2025-10-15 16:20:00', 'Pulang', '0.5072,101.4479', '18275639841029', NULL),
+('2025-10-15 07:50:00', 'Masuk', '0.5070,101.4476', '22836174592063', NULL),
+('2025-10-15 16:28:00', 'Pulang', '0.5070,101.4476', '22836174592063', NULL),
+('2025-10-16 07:46:00', 'Masuk', '0.5073,101.4480', '20594837261058', NULL),
+('2025-10-16 16:32:00', 'Pulang', '0.5073,101.4480', '20594837261058', NULL),
+('2025-10-16 07:51:00', 'Masuk', '0.5071,101.4477', '21748296351072', NULL),
+('2025-10-16 16:27:00', 'Pulang', '0.5071,101.4477', '21748296351072', NULL),
+('2025-10-16 07:49:00', 'Masuk', '0.5074,101.4481', '19562847391086', NULL),
+('2025-10-16 16:33:00', 'Pulang', '0.5074,101.4481', '19562847391086', NULL),
+('2025-10-16 07:47:00', 'Masuk', '0.5072,101.4479', '22937164825093', NULL),
+('2025-10-16 16:29:00', 'Pulang', '0.5072,101.4479', '22937164825093', NULL),
+('2025-10-16 07:53:00', 'Masuk', '0.5070,101.4478', '20681539274102', NULL),
+('2025-10-16 16:31:00', 'Pulang', '0.5070,101.4478', '20681539274102', NULL),
+('2025-10-16 07:53:00', 'Masuk', '0.5070,101.4478', '2207125092', NULL),
+('2025-10-16 16:31:00', 'Pulang', '0.5070,101.4478', '2207125092', NULL),
+('2025-10-16 07:53:00', 'Masuk', '0.5070,101.4478', '2207113380', NULL),
+('2025-10-16 16:31:00', 'Pulang', '0.5070,101.4478', '2207113380', NULL),
+('2025-10-16 07:53:00', 'Masuk', '0.5070,101.4478', '987654321', NULL),
+('2025-10-16 16:31:00', 'Pulang', '0.5070,101.4478', '987654321', NULL);
 
 
 INSERT INTO Kunjungan (

@@ -4,10 +4,12 @@ WORKDIR /app
 
 COPY package*.json ./
 
-RUN npm install
+# Install HANYA dependensi produksi
+RUN npm install --production
 
 COPY . .
 
 EXPOSE 3001
 
-CMD ["npm", "run", "dev"]
+# Jalankan aplikasi langsung, BUKAN 'npm run dev'
+CMD ["node", "index.js"]

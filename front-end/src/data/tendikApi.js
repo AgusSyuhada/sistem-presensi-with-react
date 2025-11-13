@@ -1,13 +1,14 @@
-// Buat file baru: front-end/src/data/tendikApi.js
+// front-end/src/data/tendikApi.js
 
 import axios from 'axios';
 
-// 1. Sesuaikan Base URL ke endpoint tendik (sesuai tendikRoutes.js)
-const API_BASE_URL = 'http://localhost:3001/api/tendik'; 
+// 1. Ambil dari .env, BUKAN hardcode
+const API_BASE = process.env.REACT_APP_API_BASE || 'http://localhost:3001/api'; 
 
 // Buat instance axios
 const api = axios.create({
-    baseURL: API_BASE_URL,
+    // 2. Susun baseURL seperti di authApi.js (API_BASE + /tendik)
+    baseURL: `${API_BASE}/tendik`, 
 });
 
 // Interceptor untuk menambahkan token (meniru presensiApi.js)

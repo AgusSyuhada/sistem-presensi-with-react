@@ -1,11 +1,12 @@
 import axios from 'axios';
 
-// Sesuaikan dengan port backend Anda
-const API_BASE_URL = process.env.REACT_APP_API_BASE || 'http://localhost:3000/api';
+// 1. Ambil dari .env, BUKAN hardcode
+const API_BASE = process.env.REACT_APP_API_BASE || 'http://localhost:3001/api';
 
-// Buat instance axios khusus untuk /kunjungan
+// Buat instance axios
 const api = axios.create({
-    baseURL: `${API_BASE_URL}/kunjungan`
+    // 2. Susun baseURL seperti di authApi.js (API_BASE + /presensi)
+    baseURL: `${API_BASE}/kunjungan`,
 });
 
 // Interceptor untuk menambahkan token (untuk route admin)

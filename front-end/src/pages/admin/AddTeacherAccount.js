@@ -111,8 +111,8 @@ export default function TambahAkunGuru() {
                                 <div>
                                     <label className="block text-sm font-medium text-gray-700 dark:text-gray-200 mb-1" htmlFor="id_jabatan">Jabatan</label>
                                     <select id="id_jabatan" name="id_jabatan" className="w-full px-3 py-2 text-gray-700 dark:text-gray-100 bg-white dark:bg-[#374151] border border-gray-300 dark:border-gray-600 rounded-md" value={form.id_jabatan} onChange={handleChange} required>
-                                        <option value={1}>Admin</option>
-                                        <option value={2}>Guru</option>
+                                        <option value={1}>Operator</option>
+                                        <option value={2}>Staff</option>
                                         {/* Tambahkan jabatan lain jika ada */}
                                     </select>
                                 </div>

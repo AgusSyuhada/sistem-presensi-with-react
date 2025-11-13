@@ -22,7 +22,7 @@ export const useAddAttendanceManualController = () => {
         id_tendik: "",
         tanggal: getTodayDate(),
         waktu: getCurrentTime(),
-        status: "masuk",
+        status: "Masuk",
         catatan: "",
     });
 

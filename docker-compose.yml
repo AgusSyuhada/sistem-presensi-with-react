@@ -1,4 +1,4 @@
-version: '3.8'
+version: '3.8' # (Atribut ini bisa dihapus jika Docker mengeluh)
 
 services:
   db:
@@ -16,45 +16,40 @@ services:
       - ./init.sql:/docker-entrypoint-initdb.d/init.sql
 
   server:
-    build: ./back-end
+    image: agussyuhada/mi-alfaizein:api
     container_name: presensi_api
     restart: always
-    ports:
-      - "3001:3001"
-    volumes:
-      - ./back-end:/app
-      - /app/node_modules
     env_file:
-      - ./back-end/.env
+      - ./.env
     depends_on:
       - db
       - face-service
 
   face-service:
-    build: ./face-service
+    image: agussyuhada/mi-alfaizein:face-service
     container_name: face_service
     restart: always
     ports:
       - "5000:5000"
+    env_file:
+      - ./.env
     depends_on:
       - db
-    volumes:
-      - ./face-service:/app
 
   frontend:
-    build: ./front-end
+    image: agussyuhada/mi-alfaizein:frontend
     container_name: presensi_frontend
     restart: always
     ports:
-      - "3000:3000"
-    volumes:
-      - ./front-end:/app
-      - /app/node_modules
-    environment:
-      - CHOKIDAR_USEPOLLING=true
+      - "80:80"
+      - "443:443"
+    env_file:
+      - ./.env
     depends_on:
       - server
-    command: npm start
+    volumes:
+      - ./certbot/www:/var/www/html
+      - /etc/letsencrypt:/etc/letsencrypt:ro
 
 volumes:
   db_data:

@@ -1,12 +1,12 @@
-// front-end/src/data/faceApi.js
 import axios from 'axios';
 
-// Dapatkan /api dari .env
-const API_BASE = process.env.REACT_APP_API_BASE;
+// 1. Ambil dari .env, BUKAN hardcode
+const API_BASE = process.env.REACT_APP_API_BASE || 'http://localhost:3001/api';
 
-// Buat instance axios baru khusus untuk /face
+// Buat instance axios
 const api = axios.create({
-    baseURL: `${API_BASE}/face` // -> http://localhost:3000/api/face
+    // 2. Susun baseURL seperti di authApi.js (API_BASE + /presensi)
+    baseURL: `${API_BASE}/face`,
 });
 
 // Interceptor untuk menambahkan token ke setiap request

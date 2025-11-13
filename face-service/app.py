@@ -9,11 +9,11 @@ import os
 app = Flask(__name__)
 
 DB_CONFIG = {
-    "host": "db",
-    "database": "presensi_app",
-    "user": "admin",
-    "password": "secret",
-    "port": 5432,
+    "host": os.environ.get("DB_HOST"),
+    "database": os.environ.get("POSTGRES_DB"),
+    "user": os.environ.get("POSTGRES_USER"),
+    "password": os.environ.get("POSTGRES_PASSWORD"),
+    "port": int(os.environ.get("DB_PORT")), # Port perlu di-cast ke integer
 }
 
 def get_db():

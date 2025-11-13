@@ -58,11 +58,11 @@ exports.createPresensi = async (req, res) => {
         let statusPresensi;
         
         if (presensiHariIni.rows.length === 0) {
-            statusPresensi = 'masuk';
-        } else if (presensiHariIni.rows.length === 1 && presensiHariIni.rows[0].status === 'masuk') {
-            statusPresensi = 'pulang';
+            statusPresensi = 'Masuk';
+        } else if (presensiHariIni.rows.length === 1 && presensiHariIni.rows[0].status === 'Masuk') {
+            statusPresensi = 'Pulang';
         } else {
-            return res.status(400).json({ error: 'Anda sudah melakukan presensi masuk dan pulang hari ini.' });
+            return res.status(400).json({ error: 'Anda sudah melakukan presensi Masuk dan Pulang hari ini.' });
         }
 
         // 6. Simpan ke Database
@@ -136,10 +136,10 @@ exports.getPresensiByUserId = async (req, res) => {
 exports.updateStatusByAdmin = async (req, res) => {
     try {
         const { id_presensi } = req.params;
-        const { status, catatan } = req.body; // status 'sakit' atau 'izin'
+        const { status, catatan } = req.body; // status 'Sakit' atau 'Izin'
 
-        if (status !== 'sakit' && status !== 'izin') {
-            return res.status(400).json({ error: "Status hanya boleh 'sakit' atau 'izin'." });
+        if (status !== 'Sakit' && status !== 'Izin') {
+            return res.status(400).json({ error: "Status hanya boleh 'Sakit' atau 'Izin'." });
         }
 
         const result = await pool.query(
@@ -174,8 +174,8 @@ exports.createManualPresensiByAdmin = async (req, res) => {
         if (!id_tendik || !status || !tanggal) {
             return res.status(400).json({ error: 'id_tendik, status, dan tanggal diperlukan.' });
         }
-        if (status !== 'sakit' && status !== 'izin') {
-            return res.status(400).json({ error: "Status manual hanya boleh 'sakit' atau 'izin'." });
+        if (status !== 'Sakit' && status !== 'Izin') {
+            return res.status(400).json({ error: "Status manual hanya boleh 'Sakit' atau 'Izin'." });
         }
 
         // 3. Cek apakah sudah ada presensi untuk guru ini di tanggal ini

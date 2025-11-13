@@ -1,13 +1,14 @@
-// Buat file baru: front-end/src/data/presensiApi.js
-// (Mirip dengan authApi.js, asumsikan authApi sudah ada dan menggunakan axios)
+// front-end/src/data/presensiApi.js
 
 import axios from 'axios';
 
-const API_BASE_URL = 'http://localhost:3001/api/presensi'; // Sesuaikan dengan port backend Anda
+// 1. Ambil dari .env, BUKAN hardcode
+const API_BASE = process.env.REACT_APP_API_BASE || 'http://localhost:3001/api';
 
-// Buat instance axios dengan baseURL dan interceptor untuk autentikasi
+// Buat instance axios
 const api = axios.create({
-    baseURL: API_BASE_URL,
+    // 2. Susun baseURL seperti di authApi.js (API_BASE + /presensi)
+    baseURL: `${API_BASE}/presensi`,
 });
 
 // Interceptor untuk menambahkan token ke setiap request (jika protect middleware aktif)
