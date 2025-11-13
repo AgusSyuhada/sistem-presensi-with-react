@@ -5,6 +5,7 @@ import numpy as np
 import psycopg2
 from psycopg2.extras import RealDictCursor
 import os
+import tempfile
 
 app = Flask(__name__)
 
@@ -13,11 +14,13 @@ DB_CONFIG = {
     "database": os.environ.get("POSTGRES_DB"),
     "user": os.environ.get("POSTGRES_USER"),
     "password": os.environ.get("POSTGRES_PASSWORD"),
-    "port": int(os.environ.get("DB_PORT")), # Port perlu di-cast ke integer
+    "port": int(os.environ.get("DB_PORT")),  # Port perlu di-cast ke integer
 }
+
 
 def get_db():
     return psycopg2.connect(**DB_CONFIG, cursor_factory=RealDictCursor)
+
 
 def detect_face_robust(image_path):
     image = cv2.imread(image_path)
@@ -31,9 +34,7 @@ def detect_face_robust(image_path):
     rgb_small = cv2.cvtColor(small_image, cv2.COLOR_BGR2RGB)
 
     face_locations = face_recognition.face_locations(
-        rgb_small,
-        number_of_times_to_upsample=0,
-        model="cnn"
+        rgb_small, number_of_times_to_upsample=0, model="cnn"
     )
 
     if len(face_locations) == 0:
@@ -54,6 +55,7 @@ def detect_face_robust(image_path):
 
     return (top, right, bottom, left), image
 
+
 @app.route("/register", methods=["POST"])
 def register():
     if "file" not in request.files:
@@ -64,8 +66,10 @@ def register():
     if not id_tendik:
         return jsonify({"error": "id_tendik required"}), 400
 
-    temp_path = f"/tmp/{id_tendik}_{file.filename}"
+    fd, temp_path = tempfile.mkstemp(prefix="reg_", suffix=".jpg")
+    os.close(fd)  # Tutup file descriptor agar .save() bisa menulis
     file.save(temp_path)
+    # --------------------------
 
     try:
         (top, right, bottom, left), full_image = detect_face_robust(temp_path)
@@ -96,21 +100,26 @@ def register():
         cur.close()
         conn.close()
 
-        os.remove(temp_path)
-
         if affected == 0:
             return jsonify({"error": "User tidak ditemukan"}), 404
 
-        return jsonify({
-            "message": "Wajah berhasil diregistrasi",
-            "id_tendik": id_tendik,
-            "face_size": f"{right-left}x{bottom-top}"
-        })
+        return jsonify(
+            {
+                "message": "Wajah berhasil diregistrasi",
+                "id_tendik": id_tendik,
+                "face_size": f"{right-left}x{bottom-top}",
+            }
+        )
 
     except Exception as e:
+        return jsonify({"error": str(e)}), 500
+    finally:
+        # --- PERBAIKAN ROBUSTNESS ---
+        # Selalu hapus file sementara, bahkan jika ada error.
         if os.path.exists(temp_path):
             os.remove(temp_path)
-        return jsonify({"error": str(e)}), 500
+        # ----------------------------
+
 
 @app.route("/verify", methods=["POST"])
 def verify():
@@ -118,8 +127,13 @@ def verify():
         return jsonify({"error": "No file"}), 400
 
     file = request.files["file"]
-    temp_path = f"/tmp/verify_{file.filename}"
+
+    # --- PERBAIKAN KEAMANAN ---
+    # Gunakan tempfile di SINI JUGA.
+    fd, temp_path = tempfile.mkstemp(prefix="verify_", suffix=".jpg")
+    os.close(fd)
     file.save(temp_path)
+    # --------------------------
 
     try:
         (top, right, bottom, left), full_image = detect_face_robust(temp_path)
@@ -144,26 +158,32 @@ def verify():
             ORDER BY embedding_vector <=> %s::vector
             LIMIT 1
             """,
-            (new_encoding_str, new_encoding_str)
+            (new_encoding_str, new_encoding_str),
         )
         row = cur.fetchone()
         conn.close()
-        os.remove(temp_path)
 
-        if row and row["similarity"] > 0.4: 
-            return jsonify({
-                "verified": True,
-                "id_tendik": row["id_tendik"],
-                "nama": row["nama"],
-                "confidence": round(row["similarity"], 4)
-            })
+        if row and row["similarity"] > 0.4:
+            return jsonify(
+                {
+                    "verified": True,
+                    "id_tendik": row["id_tendik"],
+                    "nama": row["nama"],
+                    "confidence": round(row["similarity"], 4),
+                }
+            )
 
         return jsonify({"verified": False, "message": "Wajah tidak dikenali"})
 
     except Exception as e:
+        return jsonify({"error": str(e)}), 500
+    finally:
+        # --- PERBAIKAN ROBUSTNESS ---
+        # Selalu hapus file sementara
         if os.path.exists(temp_path):
             os.remove(temp_path)
-        return jsonify({"error": str(e)}), 500
+        # ----------------------------
+
 
 if __name__ == "__main__":
     app.run(host="0.0.0.0", port=5000)
