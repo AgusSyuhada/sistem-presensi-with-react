@@ -49,7 +49,7 @@ export default function TambahAkunGuru() {
                     <span className="material-icons" id="hamburger-icon">menu</span>
                 </button>
                 <div className="hidden md:flex items-center">
-                    <img alt="MI ALFAIZEIN Logo" className="h-8 w-8 mr-3" src="/asset/logo-mi-al-faizein.png" />
+                    <img alt="MI ALFAIZEIN Logo" className="h-8 w-8 mr-3" src="/asset/logo-mi-al-faizein.png" fetchPriority="high" />
                     <span className="text-white text-xl font-bold">MI AL FAIZEIN</span>
                 </div>
             </header>

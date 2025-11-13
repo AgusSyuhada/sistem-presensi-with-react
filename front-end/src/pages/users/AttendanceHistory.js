@@ -52,6 +52,7 @@ export default function AttendanceHistory() {
             alt="MI ALFAIZEIN Logo"
             className="h-8 w-8 mr-3"
             src="/asset/logo-mi-al-faizein.png"
+            fetchPriority="high"
           />
           <span className="text-white text-xl font-bold">MI AL FAIZEIN</span>
         </div>

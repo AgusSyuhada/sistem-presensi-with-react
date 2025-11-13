@@ -7,14 +7,16 @@ from psycopg2.extras import RealDictCursor
 import os
 import tempfile
 
+
 app = Flask(__name__)
+
 
 DB_CONFIG = {
     "host": os.environ.get("DB_HOST"),
-    "database": os.environ.get("POSTGRES_DB"),
-    "user": os.environ.get("POSTGRES_USER"),
-    "password": os.environ.get("POSTGRES_PASSWORD"),
-    "port": int(os.environ.get("DB_PORT")),  # Port perlu di-cast ke integer
+    "database": os.environ.get("DB_DATABASE"), # BARU
+    "user": os.environ.get("DB_USER"),     # BARU
+    "password": os.environ.get("DB_PASSWORD"), # BARU
+    "port": int(os.environ.get("DB_PORT")),
 }
 
 
@@ -163,7 +165,7 @@ def verify():
         row = cur.fetchone()
         conn.close()
 
-        if row and row["similarity"] > 0.4:
+        if row and row["similarity"] > 0.8:
             return jsonify(
                 {
                     "verified": True,

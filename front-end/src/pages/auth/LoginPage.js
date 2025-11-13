@@ -38,7 +38,8 @@ export default function LoginPage() {
           <img
             alt="Company Logo"
             className="w-24 h-24 md:w-48 md:h-48"
-            src="./asset/logo-mi-al-faizein.png" // Pastikan path ini benar dari public folder
+            src="./asset/logo-mi-al-faizein.png"
+            fetchPriority="high" 
           />
         </div>
         <div className="w-full md:w-1/2 p-8 md:p-12">

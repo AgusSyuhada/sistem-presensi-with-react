@@ -29,6 +29,7 @@ export default function VisitForm() {
                                 alt="MI AL FAIZEIN Logo"
                                 className="h-8 w-auto"
                                 src="/asset/logo-mi-al-faizein.png"
+                                fetchPriority="high"
                             />
                             <span className="text-white text-lg font-semibold ml-3">
                                 MI AL FAIZEIN
